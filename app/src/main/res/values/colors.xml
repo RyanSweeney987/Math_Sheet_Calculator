@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="default_color" type="color">#ffececec</item>
+    <item name="others_grey" type="color">#666666</item>
+    <item name="numbers_blue" type="color">#44a7ff</item>
+    <item name="special_red" type="color">#ff5406</item>
+    <item name="text_color" type="color">#FFECECEC</item>
+</resources>

@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Calculator</string>
+
+    // Numpad Strings
+    <string name="numpad_one">1</string>
+    <string name="numpad_two">2</string>
+    <string name="numpad_three">3</string>
+    <string name="numpad_four">4</string>
+    <string name="numpad_five">5</string>
+    <string name="numpad_six">6</string>
+    <string name="numpad_seven">7</string>
+    <string name="numpad_eight">8</string>
+    <string name="numpad_nine">9</string>
+    <string name="numpad_zero">0</string>
+    <string name="numpad_equals">=</string>
+    <string name="numpad_plus">+</string>
+    <string name="numpad_minus">-</string>
+    <string name="numpad_multiply">×</string>
+    <string name="numpad_divide">÷</string>
+    <string name="numpad_decimal">.</string>
+    <string name="numpad_percent">%</string>
+    <string name="numpad_ce">CE</string>
+    <string name="numpad_del">DEL</string>
+
+    // Scientific Numpad Strings
+
+    // Titles
+    <string name="standard_numbpad">Standard Numpad</string>
+    <string name="scientific_numpad">Scientific Numpad</string>
+
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#581616">
+
+    <com.ryanairth.mathsheetcalculator.GUI.MultiScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:id="@id/multi_scroll_view">
+        <com.ryanairth.mathsheetcalculator.GUI.NumberGrid
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:n_g_columns="20"
+            app:n_g_rows="30"
+            app:n_g_width="30dp"
+            app:n_g_height="30dp"
+            app:n_g_color="#969696"
+            app:n_g_stroke="5"
+            android:background="#00ff0000"
+            android:id="@id/number_grid">
+
+        </com.ryanairth.mathsheetcalculator.GUI.NumberGrid>
+    </com.ryanairth.mathsheetcalculator.GUI.MultiScrollView>
+
+</LinearLayout>

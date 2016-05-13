@@ -1,0 +1,15 @@
+<resources>
+    <!-- Example customization of dimensions originally defined in res/values/dimens.xml
+         (such as screen margins) for screens with more than 820dp of available width. This
+         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively). -->
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    // Box container scale
+    <dimen name="box_dp">30dp</dimen>
+    // Number scales
+    <dimen name="main_number_dp">20dp</dimen>
+    <dimen name="power_number_dp">10dp</dimen>
+    <dimen name="previous_number_dp">10dp</dimen>
+    <dimen name="number_padding">1dp</dimen>
+    // Selection wheel image
+    <dimen name="selection_wheel_dp">400dp</dimen>
+</resources>

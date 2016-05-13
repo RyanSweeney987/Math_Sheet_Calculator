@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/prev_text_height_dp"
+    android:background="#ffffff">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/prev_text_icons_height_dp"
+        android:background="#c3c3c3"
+        android:id="@id/preview_icons_bar"
+        android:layout_alignParentTop="true">
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#adadad"
+        android:id="@id/preview_splitter_bar"
+        android:layout_alignParentBottom="true">
+    </FrameLayout>
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/preview_icons_bar"
+        android:layout_marginTop="@dimen/prev_text_margin_main_dp"
+        android:id="@id/preview_hscrollv_main"
+        android:scrollbars="none">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0"
+            android:textSize="@dimen/prev_text_main_size_sp"
+            android:textDirection="rtl"
+            android:maxLines="1"
+            android:id="@id/preview_main_text"/>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_above="@id/preview_splitter_bar"
+        android:layout_marginTop="@dimen/prev_text_margin_total_dp"
+        android:id="@id/preview_hscrollv_total"
+        android:scrollbars="none">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0"
+            android:textSize="@dimen/prev_text_total_size_sp"
+            android:textDirection="rtl"
+            android:maxLines="1"
+            android:id="@id/preview_total_text"/>
+    </HorizontalScrollView>
+</RelativeLayout>

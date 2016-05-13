@@ -1,0 +1,27 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    // Box container scale
+    <dimen name="box_dp">30dp</dimen>
+    // Number scales
+    <dimen name="main_number_dp">20dp</dimen>
+    <dimen name="power_number_dp">10dp</dimen>
+    <dimen name="previous_number_dp">10dp</dimen>
+    <dimen name="number_padding_dp">1dp</dimen>
+    // Calculator
+    <dimen name="calc_single_width_dp">85dp</dimen>
+    <dimen name="calc_single_height_dp">85dp</dimen>
+    <dimen name="calc_double_width_dp">180dp</dimen>
+    <dimen name="calc_double_height_dp">154dp</dimen>
+    <dimen name="calc_text_size_sp">32sp</dimen>
+    <dimen name="calc_margin_dp">30dp</dimen>
+    // Calc preview
+    <dimen name="prev_text_width_dp">480dp</dimen>
+    <dimen name="prev_text_height_dp">142dp</dimen>
+    <dimen name="prev_text_icons_height_dp">20dp</dimen>
+    <dimen name="prev_text_main_size_sp">50sp</dimen>
+    <dimen name="prev_text_total_size_sp">40sp</dimen>
+    <dimen name="prev_text_margin_main_dp">5dp</dimen>
+    <dimen name="prev_text_margin_total_dp">10dp</dimen>
+</resources>

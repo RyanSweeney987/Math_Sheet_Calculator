@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="@dimen/box_dp"
+    android:layout_height="@dimen/box_dp"
+    android:id="@id/container_layout">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@id/main_number"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textSize="@dimen/main_number_dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:id="@id/power_number"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:gravity="top"
+        android:textSize="@dimen/power_number_dp"
+        android:paddingRight="@dimen/number_padding"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        android:id="@id/previous_number"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
+        android:textSize="@dimen/previous_number_dp"
+        android:paddingLeft="@dimen/number_padding"/>
+</RelativeLayout>

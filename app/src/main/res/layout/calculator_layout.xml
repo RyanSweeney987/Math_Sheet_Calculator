@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#35d537"
+    android:id="@id/calculator"
+    android:layout_gravity="center_horizontal">
+
+    <com.ryanairth.mathsheetcalculator.GUI.CalculatorPreview
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/prev_text_height_dp"
+        android:background="@color/default_color"
+        android:layout_gravity="top|center_horizontal"
+        android:id="@id/calculator_preview">
+    </com.ryanairth.mathsheetcalculator.GUI.CalculatorPreview>
+
+    <com.ryanairth.mathsheetcalculator.GUI.PadSlider
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@id/calculator_pad_slider"
+        android:layout_below="@id/calculator_preview">
+
+        <com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+        </com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad>
+
+        <com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+        </com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad>
+
+    </com.ryanairth.mathsheetcalculator.GUI.PadSlider>
+</RelativeLayout>

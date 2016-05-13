@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    // MultiScrollView ID
+    <item name="multi_scroll_view" type="id"/>
+    // MathGrid Layout ID
+    <item name="number_grid" type="id"/>
+    // GridUI View ID
+    <item name="line_grid" type="id"/>
+    // Container IDs
+    <item name="container_layout" type="id"/>
+    <item name="main_number" type="id"/>
+    <item name="power_number" type="id"/>
+    <item name="previous_number" type="id"/>
+
+    // Calculator IDs
+    <item name="calculator" type="id"/>
+    <item name="calculator_preview" type="id"/>
+    <item name="calculator_number_pad" type="id"/>
+    <item name="calculator_scientific_pad" type="id"/>
+    <item name="calculator_pad_slider" type="id"/>
+
+    // Preview IDs
+    <item name="preview_main_text" type="id"/>
+    <item name="preview_total_text" type="id"/>
+    <item name="preview_icons_bar" type="id"/>
+    <item name="preview_splitter_bar" type="id"/>
+    <item name="preview_hscrollv_main" type="id"/>
+    <item name="preview_hscrollv_total" type="id"/>
+
+    //Numpad IDs
+    // TODO - find something to use as other or use two double spaces
+    <item name="numpad_one" type="id"/>
+    <item name="numpad_two" type="id"/>
+    <item name="numpad_three" type="id"/>
+    <item name="numpad_four" type="id"/>
+    <item name="numpad_five" type="id"/>
+    <item name="numpad_six" type="id"/>
+    <item name="numpad_seven" type="id"/>
+    <item name="numpad_eight" type="id"/>
+    <item name="numpad_nine" type="id"/>
+    <item name="numpad_zero" type="id"/>
+    <item name="numpad_equals" type="id"/>
+    <item name="numpad_plus" type="id"/>
+    <item name="numpad_minus" type="id"/>
+    <item name="numpad_multiply" type="id"/>
+    <item name="numpad_divide" type="id"/>
+    <item name="numpad_decimal" type="id"/>
+    <item name="numpad_percent" type="id"/>
+    <item name="numpad_ce" type="id"/>
+    <item name="numpad_del" type="id"/>
+
+    // Scientific Numpad IDs
+    // TODO - all of it in general
+</resources>

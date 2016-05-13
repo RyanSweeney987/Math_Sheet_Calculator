@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NumberGrid">
+        <attr name="n_g_columns" format="integer"/>
+        <attr name="n_g_rows" format="integer"/>
+        <attr name="n_g_width" format="dimension"/>
+        <attr name="n_g_height" format="dimension"/>
+        <attr name="n_g_number_color" format="color"/>
+        <attr name="n_g_line_color" format="color"/>
+        <attr name="n_g_line_stroke" format="float"/>
+    </declare-styleable>
+    <declare-styleable name="LineGrid">
+        <attr name="l_g_columns" format="integer"/>
+        <attr name="l_g_rows" format="integer"/>
+        <attr name="l_g_width" format="dimension"/>
+        <attr name="l_g_height" format="dimension"/>
+        <attr name="l_g_color" format="color"/>
+        <attr name="l_g_stroke" format="float"/>
+    </declare-styleable>
+</resources>
