@@ -8,13 +8,11 @@ import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ryanairth.mathsheetcalculator.Math.Block;
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
 import com.ryanairth.mathsheetcalculator.R;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
@@ -25,7 +23,7 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  */
 public class CalculatorPreview extends RelativeLayout {
     // TODO - make so that if user enters a number after hitting '=', they start off with the previous value
-    final String DASH_SEPERATOR = "------------------------------------------------------";
+    final String DASH_SEPARATOR = "------------------------------------------------------";
 
     /*
         Text view for the numbers and symbols
@@ -184,7 +182,7 @@ public class CalculatorPreview extends RelativeLayout {
         Log.i(TAG, "Last char: " + lastChar);
         Log.i(TAG, "Current char: " + value);
         Log.i(TAG, "Current block string value: " + currentBlockString);
-        Log.i(TAG, DASH_SEPERATOR);
+        Log.i(TAG, DASH_SEPARATOR);
     }
 
     /**
@@ -384,7 +382,7 @@ public class CalculatorPreview extends RelativeLayout {
 
                     blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
 
-                    Log.i(TAG, DASH_SEPERATOR);
+                    Log.i(TAG, DASH_SEPARATOR);
                 }
 
                 currentBlockString = value;
@@ -397,7 +395,7 @@ public class CalculatorPreview extends RelativeLayout {
 
                     blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
 
-                    Log.i(TAG, DASH_SEPERATOR);
+                    Log.i(TAG, DASH_SEPARATOR);
                 }
 
                 currentBlockString = value;
@@ -406,7 +404,7 @@ public class CalculatorPreview extends RelativeLayout {
             Log.i(TAG, "Number of blocks: " + blockManager.getBlocks().size());
             Log.i(TAG, "First on deque: " + blockManager.getFirstBlock());
             Log.i(TAG, "Last on deque: " + blockManager.getFinalBlock());
-            Log.i(TAG, DASH_SEPERATOR);
+            Log.i(TAG, DASH_SEPARATOR);
         } else {
             currentBlockString += value;
         }

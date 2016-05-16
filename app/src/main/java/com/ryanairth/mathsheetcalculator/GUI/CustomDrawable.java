@@ -7,5 +7,5 @@ import android.graphics.Canvas;
  * Copyright information found in accompanying License.txt file.
  */
 public interface CustomDrawable {
-    public void draw(Canvas canvas);
+    void draw(Canvas canvas);
 }
