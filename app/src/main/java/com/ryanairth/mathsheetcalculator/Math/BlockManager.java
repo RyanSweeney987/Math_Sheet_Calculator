@@ -80,21 +80,6 @@ public class BlockManager {
         // FIXME - fix so it actually calculates the sum of the math equation
 
         double sum = 0.0;
-        double currentNumber = 0.0;
-        MathOperator currentSymbol = MathOperator.NONE;
-
-        Block currentBlock = null;
-        Block previousBlock = null;
-
-        for(int i = 0; i < blocks.size(); i++) {
-            currentBlock = blocks.get(i);
-
-            if(currentBlock instanceof NumberBlock) {
-                sum = ((NumberBlock)currentBlock).getValue();
-            } else if(currentBlock instanceof SymbolBlock) {
-
-            }
-        }
 
         return sum;
     }
