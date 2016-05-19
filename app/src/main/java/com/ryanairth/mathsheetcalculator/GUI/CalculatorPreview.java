@@ -202,20 +202,21 @@ public class CalculatorPreview extends RelativeLayout {
      * Processes the equals input, will calculate the final sum given and sets the preview text
      */
     private void processEquals() {
-        // FIXME: 04/05/2016
+        // FIXME - Make it so that number is addable if we choose to carry on from last equals sign
 
+        updateCurrentBlockString(currentBlockString, true, false);
 
         // Get sum from block manager
-        double sum = blockManager.getSum();
+        double sum = blockManager.calculateTotal();
         // Format it so it's presentable
         String sumString = formatNumber(sum);
 
         // We'll need this later
-        String currentBlock = currentBlockString;
+ //       String currentBlock = currentBlockString;
         // Reset the preview
         resetPreview();
         // Set the current block string to last value
-        updateCurrentBlockString(currentBlock, true, false);
+//        updateCurrentBlockString(currentBlock, true, false);
         // Set so that the answer is in the larger text
         previewTextMain.setText(sumString);
         previewTextTotal.setText("");
@@ -348,11 +349,11 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextMain.setText(updatedText);
 
         // TODO - show total
-        if(blockManager.getBlocks().size() != 0) {
-            double sum = blockManager.getSum();
+        /*if(blockManager.getBlocks().size() != 0) {
+            double sum = blockManager.calculateTotal();
 
             previewTextTotal.setText(formatNumber(sum));
-        }
+        }*/
 
         // Scroll to end
         scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));

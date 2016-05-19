@@ -2,7 +2,13 @@ package com.ryanairth.mathsheetcalculator.Math;
 
 import android.util.Log;
 
+import com.ryanairth.mathsheetcalculator.Errors.InvalidMathOperatorError;
+import com.ryanairth.mathsheetcalculator.GUI.Box;
+import com.ryanairth.mathsheetcalculator.GUI.Line;
+import com.ryanairth.mathsheetcalculator.MathObject_Deprecated.Symbol;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.*;
@@ -72,16 +78,66 @@ public class BlockManager {
     }
 
     /**
-     * Calculate and return the sum of the maths equation entered by the user
+     * Calculate and return the total of the maths equation entered by the user
      *
      * @return number representing the sum of the maths equation
      */
-    public double getSum() {
-        // FIXME - fix so it actually calculates the sum of the math equation
+    public double calculateTotal() {
+        // Get the first number to start off
+        double currentValue = 0.0;
 
-        double sum = 0.0;
+        // If there aren't any elements in the blocks array, return zero
+        if(blocks.size() <= 0) {
+            return 0.0;
+        }
 
-        return sum;
+        // We know there's at least a single element, so we know that blocks.get(0) will not fail
+        currentValue = ((NumberBlock)blocks.get(0)).getValue();
+
+        /*
+            If there's only one or two elements return the current value as element 0 will be a number
+            and element 1 will be a symbol/math operator
+         */
+        if(blocks.size() <= 2) {
+            return currentValue;
+        }
+
+        // Otherwise we're fine to carry on with our usual operations
+        for(int i = 1; i < blocks.size(); i++) {
+            // Every time we loop we want the next thing to get to be the operator used
+            MathOperator operator = ((SymbolBlock)blocks.get(i++)).getValue();
+            // After we get the operator to use, we get the number that will be used to modify the current value
+            double nextValue = ((NumberBlock)blocks.get(i)).getValue();
+
+            // Then we operate on the previous number
+            switch (operator) {
+                case PLUS:
+                    currentValue += nextValue;
+                    break;
+                case MINUS:
+                    currentValue -= nextValue;
+                    break;
+                case MULTIPLY:
+                    currentValue *= nextValue;
+                    break;
+                case DIVIDE:
+                    currentValue /= nextValue;
+                    break;
+                case PERCENTAGE:
+                    currentValue = (currentValue / nextValue) * 100;
+                    break;
+                case NONE:
+                    /*
+                        This should never occur, if it does, there's an issue when adding the operator
+                        to the block manager in any class that has this as an object
+                     */
+                    default:
+                        throw new InvalidMathOperatorError("Error calculating total, math operator is: "
+                                + MathOperator.NONE);
+            }
+        }
+
+        return currentValue;
     }
 
     /**
