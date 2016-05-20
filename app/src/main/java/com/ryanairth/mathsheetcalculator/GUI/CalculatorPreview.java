@@ -202,24 +202,27 @@ public class CalculatorPreview extends RelativeLayout {
      * Processes the equals input, will calculate the final sum given and sets the preview text
      */
     private void processEquals() {
-        // FIXME - Make it so that number is addable if we choose to carry on from last equals sign
-
         updateCurrentBlockString(currentBlockString, true, false);
-
         // Get sum from block manager
-        double sum = blockManager.calculateTotal();
+        double sum = 0.0;
+        try {
+            sum = blockManager.calculateTotal();
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Blocks: " + blockManager.toString());
+            e.printStackTrace();
+        }
+
         // Format it so it's presentable
         String sumString = formatNumber(sum);
-
-        // We'll need this later
- //       String currentBlock = currentBlockString;
         // Reset the preview
         resetPreview();
-        // Set the current block string to last value
-//        updateCurrentBlockString(currentBlock, true, false);
-        // Set so that the answer is in the larger text
-        previewTextMain.setText(sumString);
+
+        // Set current text and reset the preview text total to null
+        setTextAndScroll(sumString);
         previewTextTotal.setText("");
+
+        // Update the current block
+        currentBlockString = sumString;
 
         Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
                 + blockManager.toString() + "::Blocks::");
@@ -235,11 +238,17 @@ public class CalculatorPreview extends RelativeLayout {
         setTextAndScroll(currentText + digit);
 
         if(!Character.isDigit(lastChar) && lastChar != '.' && lastChar != '-') {
-            // If following a symbol except minus or decimal start again otherwise we gots to
+            // If following a symbol except minus or decimal start again otherwise we have to
             // add it to the current block string
             updateCurrentBlockString(String.valueOf(digit), true, false);
-        } else if(lastChar == '-' && (!Character.isDigit(secondLastChar) || secondLastChar == '#')) {
-            updateCurrentBlockString(String.valueOf(digit), false, false);
+        } else if(lastChar == '-') {
+            // If second last character isn't a number or is the null character, include minus
+            if(!Character.isDigit(secondLastChar) || secondLastChar == '#') {
+                updateCurrentBlockString(String.valueOf(digit), false, false);
+            } else {
+                // Otherwise minus is being used as an operator in this instance
+                updateCurrentBlockString(String.valueOf(digit), true, false);
+            }
         } else {
             updateCurrentBlockString(String.valueOf(digit), false, false);
         }
@@ -379,9 +388,13 @@ public class CalculatorPreview extends RelativeLayout {
                     Double number = Double.parseDouble(currentBlockString);
                     blockManager.createAndAddBlock(number);
                 } catch (NumberFormatException e) {
-                    Log.i(TAG, "Failed parsing a number, adding character!");
+                    Log.w(TAG, "Failed parsing a number, adding character!");
 
-                    blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    if(currentBlockString.length() > 0) {
+                        blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    } else {
+                        Log.e(TAG, "Failed to add character, currentBlockString is empty");
+                    }
 
                     Log.i(TAG, DASH_SEPARATOR);
                 }
@@ -392,9 +405,14 @@ public class CalculatorPreview extends RelativeLayout {
                     Double number = Double.parseDouble(currentBlockString);
                     blockManager.createAndAddBlock(number);
                 } catch(NumberFormatException e) {
-                    Log.i(TAG, "Failed parsing a number, adding character!");
+                    Log.w(TAG, "Failed parsing a number, adding character!");
 
-                    blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    if(currentBlockString.length() > 0) {
+                        blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    } else {
+                        Log.e(TAG, "Failed to add character, currentBlockString is empty");
+                    }
+
 
                     Log.i(TAG, DASH_SEPARATOR);
                 }
