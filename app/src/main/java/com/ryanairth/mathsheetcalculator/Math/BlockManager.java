@@ -22,6 +22,10 @@ public class BlockManager {
         List containing "blocks", each block represents a symbol or a number
      */
     private List<Block> blocks;
+    /*
+        Object specifically used to evaluate the blocks
+     */
+    private BlockEvaluator blockEvaluator;
 
     /**
      * BlockManager manages the numbers and symbols entered by the user in modular blocks, {@link BlockManager}
@@ -32,6 +36,7 @@ public class BlockManager {
      */
     public BlockManager() {
         blocks = new ArrayList<>();
+        blockEvaluator = new BlockEvaluator(blocks);
     }
 
     /**
@@ -78,66 +83,14 @@ public class BlockManager {
     }
 
     /**
-     * Calculate and return the total of the maths equation entered by the user
+     * Get the {@link BlockEvaluator} used to calculate the final value of all the blocks entered by the user
      *
-     * @return number representing the sum of the maths equation
+     * @see BlockEvaluator
+     *
+     * @return block evaluator object
      */
-    public double calculateTotal() {
-        // Get the first number to start off
-        double currentValue = 0.0;
-
-        // If there aren't any elements in the blocks array, return zero
-        if(blocks.size() <= 0) {
-            return 0.0;
-        }
-
-        // We know there's at least a single element, so we know that blocks.get(0) will not fail
-        currentValue = ((NumberBlock)blocks.get(0)).getValue();
-
-        /*
-            If there's only one or two elements return the current value as element 0 will be a number
-            and element 1 will be a symbol/math operator
-         */
-        if(blocks.size() <= 2) {
-            return currentValue;
-        }
-
-        // Otherwise we're fine to carry on with our usual operations
-        for(int i = 1; i < blocks.size(); i++) {
-            // Every time we loop we want the next thing to get to be the operator used
-            MathOperator operator = ((SymbolBlock)blocks.get(i++)).getValue();
-            // After we get the operator to use, we get the number that will be used to modify the current value
-            double nextValue = ((NumberBlock)blocks.get(i)).getValue();
-
-            // Then we operate on the previous number
-            switch (operator) {
-                case PLUS:
-                    currentValue += nextValue;
-                    break;
-                case MINUS:
-                    currentValue -= nextValue;
-                    break;
-                case MULTIPLY:
-                    currentValue *= nextValue;
-                    break;
-                case DIVIDE:
-                    currentValue /= nextValue;
-                    break;
-                case PERCENTAGE:
-                    currentValue = (currentValue / nextValue) * 100;
-                    break;
-                case NONE:
-                    /*
-                        This should never occur, if it does, there's an issue when adding the operator
-                        to the block manager in any class that has this as an object
-                     */
-                    default:
-                        throw new InvalidMathOperatorError("Error calculating total, math operator is: "
-                                + MathOperator.NONE);
-            }
-        }
-
-        return currentValue;
+    public BlockEvaluator getBlockEvaluator() {
+        return blockEvaluator;
     }
 
     /**

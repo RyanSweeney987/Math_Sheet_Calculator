@@ -1,6 +1,7 @@
 package com.ryanairth.mathsheetcalculator.GUI;
 
 import android.content.Context;
+import android.util.AndroidRuntimeException;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -203,10 +204,14 @@ public class CalculatorPreview extends RelativeLayout {
      */
     private void processEquals() {
         updateCurrentBlockString(currentBlockString, true, false);
+
+        Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
+                + blockManager.toString() + "::Blocks::");
+
         // Get sum from block manager
         double sum = 0.0;
         try {
-            sum = blockManager.calculateTotal();
+            sum = blockManager.getBlockEvaluator().calculateTotal();
         } catch (ClassCastException e) {
             Log.e(TAG, "Blocks: " + blockManager.toString());
             e.printStackTrace();
@@ -216,16 +221,11 @@ public class CalculatorPreview extends RelativeLayout {
         String sumString = formatNumber(sum);
         // Reset the preview
         resetPreview();
-
         // Set current text and reset the preview text total to null
         setTextAndScroll(sumString);
         previewTextTotal.setText("");
-
         // Update the current block
         currentBlockString = sumString;
-
-        Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
-                + blockManager.toString() + "::Blocks::");
     }
 
     /**
@@ -352,17 +352,33 @@ public class CalculatorPreview extends RelativeLayout {
      * @param updatedText the text that we want the preview texts to display
      */
     private void setTextAndScroll(String updatedText) {
-        // TODO - update text so that total shows total sum and main shows the current entry give by the user
-
         // Update text
         previewTextMain.setText(updatedText);
 
-        // TODO - show total
-        /*if(blockManager.getBlocks().size() != 0) {
-            double sum = blockManager.calculateTotal();
+        // TODO - show current total
+        if(blockManager.getBlocks().size() != 0) {
+            Log.i(TAG, "Showing total");
+
+            double sum = 0.0;
+
+            try {
+                sum = blockManager.getBlockEvaluator().calculateCurrentTotal();
+            } catch (Exception e) {
+                Log.e(TAG, blockManager.toString());
+
+                StringBuilder stackTrace = new StringBuilder();
+
+                for(StackTraceElement elem : e.getStackTrace()) {
+                    stackTrace.append(elem.toString());
+                    stackTrace.append(System.getProperty("line.separator"));
+                }
+
+                Log.e("AndroidRuntime: ", stackTrace.toString());
+            }
+
 
             previewTextTotal.setText(formatNumber(sum));
-        }*/
+        }
 
         // Scroll to end
         scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));
