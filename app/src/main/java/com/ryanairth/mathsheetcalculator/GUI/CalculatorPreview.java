@@ -58,6 +58,10 @@ public class CalculatorPreview extends RelativeLayout {
         Second last character in current text
      */
     private char secondLastChar;
+    /*
+        Boolean to see if the equation has currently been evaluated (equals sign has been pressed)
+     */
+    private boolean isEvaluated;
 
     /**
      * Box used to preview the numbers the user has entered
@@ -141,18 +145,19 @@ public class CalculatorPreview extends RelativeLayout {
         if(currentText.equals("0")) {
             switch (value) {
                 case '-':
-                    resetCurrentText("Current text = '0', resetting to allow new value");
+                    currentText = "";
 
                     processMinus();
                     break;
                 case '.':
-                    resetCurrentText("Current text = '0', resetting to allow new value");
+                    currentText = "";
 
                     processDecimal();
+
                     break;
                 default:
                     if(Character.isDigit(value)) {
-                        resetCurrentText("Current text = '0', resetting to allow new value");
+                        currentText = "";
 
                         processDigit(value);
                     }
@@ -170,6 +175,17 @@ public class CalculatorPreview extends RelativeLayout {
                     break;
                 default:
                     if(Character.isDigit(value)) {
+                        if(isEvaluated) {
+                            // FIXME - previous number still gets added, change so that it counts as a new number
+                            // rather than carrying on
+                            resetPreview();
+
+                            currentBlockString = "";
+                            currentText = "";
+
+                            isEvaluated = false;
+                        }
+
                         processDigit(value);
                     } else {
                         processSymbol(value);
@@ -184,19 +200,6 @@ public class CalculatorPreview extends RelativeLayout {
         Log.i(TAG, "Current char: " + value);
         Log.i(TAG, "Current block string value: " + currentBlockString);
         Log.i(TAG, DASH_SEPARATOR);
-    }
-
-    /**
-     * Pretty much a temporary helper method
-     *
-     * @param logString what to display before making changes
-     */
-    private void resetCurrentText(String logString) {
-        Log.i(TAG, logString);
-
-        currentText = "";
-
-        Log.i(TAG, "Current text value: " + currentText);
     }
 
     /**
@@ -226,6 +229,8 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextTotal.setText("");
         // Update the current block
         currentBlockString = sumString;
+        // Set the isEvaluated boolean for logic that deals with further input after = has been pressed
+        isEvaluated = true;
     }
 
     /**
@@ -455,7 +460,6 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextMain.setText("0");
         previewTextTotal.setText("0");
 
-        // Reset the currentBlockString to an empty string
         currentBlockString = "";
 
         // Reset the block manager, deleting all blocks
@@ -464,6 +468,8 @@ public class CalculatorPreview extends RelativeLayout {
         // Reset last and second last char parameters to the null value (aka: "/0")
         lastChar = 0;
         secondLastChar = 0;
+
+        isEvaluated = false;
     }
 
     /**
