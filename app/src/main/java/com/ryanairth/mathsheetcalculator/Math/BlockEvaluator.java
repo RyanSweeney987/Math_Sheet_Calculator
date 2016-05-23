@@ -72,9 +72,9 @@ public class BlockEvaluator {
         // Otherwise we're fine to carry on with our usual operations
         for(int i = 1; i < blocks.size(); i++) {
             // Test to see if final block is a symbol, if so, break, no need to continue
-            /*if(i == blocks.size() - 1 && blocks.get(i) instanceof SymbolBlock) {
+            if(i == blocks.size() - 1 && blocks.get(i) instanceof SymbolBlock) {
                 break;
-            }*/
+            }
 
             // Every time we loop we want the next thing to get to be the operator used
             MathOperator operator = ((SymbolBlock)blocks.get(i++)).getValue();

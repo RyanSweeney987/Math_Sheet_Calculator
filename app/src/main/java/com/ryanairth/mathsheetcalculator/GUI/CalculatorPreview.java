@@ -176,12 +176,7 @@ public class CalculatorPreview extends RelativeLayout {
                 default:
                     if(Character.isDigit(value)) {
                         if(isEvaluated) {
-                            // FIXME - previous number still gets added, change so that it counts as a new number
-                            // rather than carrying on
                             resetPreview();
-
-                            currentBlockString = "";
-                            currentText = "";
 
                             isEvaluated = false;
                         }
@@ -242,7 +237,7 @@ public class CalculatorPreview extends RelativeLayout {
         // If it's a digit, set text
         setTextAndScroll(currentText + digit);
 
-        if(!Character.isDigit(lastChar) && lastChar != '.' && lastChar != '-') {
+        if(!Character.isDigit(lastChar) && lastChar != '.' && lastChar != '-' && lastChar != '\u0000') {
             // If following a symbol except minus or decimal start again otherwise we have to
             // add it to the current block string
             updateCurrentBlockString(String.valueOf(digit), true, false);
@@ -461,6 +456,7 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextTotal.setText("0");
 
         currentBlockString = "";
+        currentText = "";
 
         // Reset the block manager, deleting all blocks
         blockManager.reset();
