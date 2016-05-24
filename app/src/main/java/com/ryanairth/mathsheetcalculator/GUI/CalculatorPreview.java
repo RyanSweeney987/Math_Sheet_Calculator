@@ -1,7 +1,6 @@
 package com.ryanairth.mathsheetcalculator.GUI;
 
 import android.content.Context;
-import android.util.AndroidRuntimeException;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +22,6 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  * Copyright information found in accompanying License.txt file.
  */
 public class CalculatorPreview extends RelativeLayout {
-    // TODO - make so that if user enters a number after hitting '=', they start off with the previous value
     final String DASH_SEPARATOR = "------------------------------------------------------";
 
     /*
@@ -140,6 +138,15 @@ public class CalculatorPreview extends RelativeLayout {
             secondLastChar = currentText.charAt(currentText.length() - 2);
         }
 
+        // If the calculation was recently evaluated we need to do certain things based on the next input
+        if(isEvaluated) {
+            if(Character.isDigit(value)) {
+                resetPreview();
+            }
+
+            isEvaluated = false;
+        }
+
         // If the entire string just contains zero, the default start point, set the current text to
         // an empty string
         if(currentText.equals("0")) {
@@ -175,12 +182,6 @@ public class CalculatorPreview extends RelativeLayout {
                     break;
                 default:
                     if(Character.isDigit(value)) {
-                        if(isEvaluated) {
-                            resetPreview();
-
-                            isEvaluated = false;
-                        }
-
                         processDigit(value);
                     } else {
                         processSymbol(value);
@@ -208,6 +209,7 @@ public class CalculatorPreview extends RelativeLayout {
 
         // Get sum from block manager
         double sum = 0.0;
+        // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
         try {
             sum = blockManager.getBlockEvaluator().calculateTotal();
         } catch (ClassCastException e) {
@@ -220,7 +222,7 @@ public class CalculatorPreview extends RelativeLayout {
         // Reset the preview
         resetPreview();
         // Set current text and reset the preview text total to null
-        setTextAndScroll(sumString);
+        setText(sumString);
         previewTextTotal.setText("");
         // Update the current block
         currentBlockString = sumString;
@@ -235,7 +237,7 @@ public class CalculatorPreview extends RelativeLayout {
      */
     private void processDigit(final char digit) {
         // If it's a digit, set text
-        setTextAndScroll(currentText + digit);
+        setText(currentText + digit);
 
         if(!Character.isDigit(lastChar) && lastChar != '.' && lastChar != '-' && lastChar != '\u0000') {
             // If following a symbol except minus or decimal start again otherwise we have to
@@ -266,16 +268,16 @@ public class CalculatorPreview extends RelativeLayout {
             // If the case is that it's at the beginning automatically add a zero if the decimal
             // is pressed
             if(currentText.equals("") || currentText.equals("0")) {
-                setTextAndScroll(currentText + 0 + DECIMAL);
+                setText(currentText + 0 + DECIMAL);
 
                 updateCurrentBlockString(0 + String.valueOf(DECIMAL), true, false);
             } else if(Character.isDigit(lastChar)) {
-                setTextAndScroll(currentText + DECIMAL);
+                setText(currentText + DECIMAL);
 
                 updateCurrentBlockString(String.valueOf(DECIMAL), false, false);
             } else {
                 // To handle any case where the previous value isn't a number, much like the beginning
-                setTextAndScroll(currentText + 0 + DECIMAL);
+                setText(currentText + 0 + DECIMAL);
 
                 // Also include for the case where we want a negative decimal and the user just presses
                 // decimal to automatically add the zero
@@ -297,28 +299,28 @@ public class CalculatorPreview extends RelativeLayout {
 
         // For the first entry
         if(currentText.equals("") || currentText.equals("0")) {
-            setTextAndScroll(currentText + MINUS);
+            setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), true, false);
         }
         // If the last character is a number, we're specifically looking to take away from it
         if(Character.isDigit(lastChar)) {
-            setTextAndScroll(currentText + MINUS);
+            setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), true, false);
         }
         // Otherwise we are starting a new, negative number however, we can only ever have a
         // symbol followed by a minus, nothing else
         if(secondLastChar != '#' && !Character.isDigit(lastChar) && Character.isDigit(secondLastChar)) {
-            setTextAndScroll(currentText + MINUS);
+            setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), true, false);
         }
     }
 
     /**
-     * Processes symbols, pretty much everything except digits, decimal and minus, so plus, mult, divide
-     * , percentage etc
+     * Processes symbols, pretty much everything except digits, decimal and minus, so plus, mult,
+     * divide, percentage etc
      */
     private void processSymbol(final char symbol) {
         // If the last character is a minus
@@ -327,7 +329,7 @@ public class CalculatorPreview extends RelativeLayout {
                 updateCurrentBlockString(String.valueOf(currentText), true, false);
             }*/
 
-            setTextAndScroll(currentText + symbol);
+            setText(currentText + symbol);
 
             updateCurrentBlockString(String.valueOf(symbol), true, false);
         }
@@ -339,7 +341,7 @@ public class CalculatorPreview extends RelativeLayout {
             if(Character.isDigit(secondLastChar)) {
                 String subString = currentText.substring(0, currentText.length() - 1);
 
-                setTextAndScroll(subString + symbol);
+                setText(subString + symbol);
 
                 updateCurrentBlockString(String.valueOf(symbol), true, true);
             }
@@ -351,16 +353,17 @@ public class CalculatorPreview extends RelativeLayout {
      *
      * @param updatedText the text that we want the preview texts to display
      */
-    private void setTextAndScroll(String updatedText) {
+    private void setText(String updatedText) {
         // Update text
         previewTextMain.setText(updatedText);
 
-        // TODO - show current total
+        // If there's more than one block
         if(blockManager.getBlocks().size() != 0) {
             Log.i(TAG, "Showing total");
 
             double sum = 0.0;
 
+            // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
             try {
                 sum = blockManager.getBlockEvaluator().calculateCurrentTotal();
             } catch (Exception e) {
@@ -380,11 +383,15 @@ public class CalculatorPreview extends RelativeLayout {
             previewTextTotal.setText(formatNumber(sum));
         }
 
-        // Scroll to end
+        scrollText();
+    }
+
+    private void scrollText() {
+        // TODO - check to see if answer is given and using lots of decimals, if so, scroll to far left
+        // otherwise maintain scroll at most recent value
         scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));
         scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getRight()));
     }
-
     /**
      * Helper method that updates the currentBlockString as well as modifying the block manager
      * to have the latest data

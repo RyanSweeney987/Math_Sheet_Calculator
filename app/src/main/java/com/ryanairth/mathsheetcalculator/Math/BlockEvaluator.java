@@ -104,6 +104,8 @@ public class BlockEvaluator {
                         to the block manager in any class that has this as an object
                      */
                 default:
+                    // Might not actually need to throw anything here, though, just hoping it would be useful
+                    // perhaps it's an incorrect usage, not too used to throwing errors and exceptions
                     throw new InvalidMathOperatorError("Error calculating total, math operator is: "
                             + MathOperator.NONE);
             }
