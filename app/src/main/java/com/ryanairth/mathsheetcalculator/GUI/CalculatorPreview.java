@@ -5,11 +5,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
+import com.ryanairth.mathsheetcalculator.Math.NumberBlock;
 import com.ryanairth.mathsheetcalculator.R;
 
 import java.util.ArrayList;
@@ -121,6 +123,9 @@ public class CalculatorPreview extends RelativeLayout {
 
         // Initialize the currentBlockString so it's empty rather than null
         currentBlockString = "";
+
+        // Create the autoscrollers
+
     }
 
     /**
@@ -144,7 +149,7 @@ public class CalculatorPreview extends RelativeLayout {
                 resetPreview();
             }
 
-            isEvaluated = false;
+            //isEvaluated = false;
         }
 
         // If the entire string just contains zero, the default start point, set the current text to
@@ -195,7 +200,7 @@ public class CalculatorPreview extends RelativeLayout {
         Log.i(TAG, "Last char: " + lastChar);
         Log.i(TAG, "Current char: " + value);
         Log.i(TAG, "Current block string value: " + currentBlockString);
-        Log.i(TAG, DASH_SEPARATOR);
+        Log.e(TAG, DASH_SEPARATOR);
     }
 
     /**
@@ -226,8 +231,13 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextTotal.setText("");
         // Update the current block
         currentBlockString = sumString;
+
+        updateCurrentBlockString(currentBlockString, true, false);
+
         // Set the isEvaluated boolean for logic that deals with further input after = has been pressed
         isEvaluated = true;
+
+        scrollText(FOCUS_LEFT);
     }
 
     /**
@@ -383,14 +393,26 @@ public class CalculatorPreview extends RelativeLayout {
             previewTextTotal.setText(formatNumber(sum));
         }
 
-        scrollText();
+        scrollText(FOCUS_RIGHT);
     }
 
-    private void scrollText() {
-        // TODO - check to see if answer is given and using lots of decimals, if so, scroll to far left
-        // otherwise maintain scroll at most recent value
-        scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));
-        scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getRight()));
+    /**
+     * Method that scrolls both texts to the end in a given direction, uses View.FOCUS_LEFT/RIGHT
+     *
+     * @param direction direction to scroll the text in
+     */
+    private void scrollText(int direction) {
+        Log.e(TAG, "Scrolling text, isEvaluated: " + isEvaluated);
+        switch (direction) {
+            case FOCUS_LEFT:
+                scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getLeft()));
+                scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getLeft()));
+                break;
+            case FOCUS_RIGHT:
+                scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));
+                scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getRight()));
+                break;
+        }
     }
     /**
      * Helper method that updates the currentBlockString as well as modifying the block manager
@@ -446,7 +468,7 @@ public class CalculatorPreview extends RelativeLayout {
             Log.i(TAG, "Number of blocks: " + blockManager.getBlocks().size());
             Log.i(TAG, "First on deque: " + blockManager.getFirstBlock());
             Log.i(TAG, "Last on deque: " + blockManager.getFinalBlock());
-            Log.i(TAG, DASH_SEPARATOR);
+            Log.e(TAG, DASH_SEPARATOR);
         } else {
             currentBlockString += value;
         }
@@ -480,10 +502,33 @@ public class CalculatorPreview extends RelativeLayout {
      */
     public void deleteLastInput() {
         Log.i(TAG, "Undoing last input");
+        // FIXME - deleting symbol causes StringIndexOutOfBounds else where
+        // FIXME - deletes two characters!
+        if(currentBlockString.length() != 0) {
+            Log.i(TAG, "Current text before: " + currentText);
+            Log.i(TAG, "Current text block before: " + currentBlockString);
 
+            int stringSizeBlock = currentBlockString.length();
+            String subStringCurrentBlock = currentBlockString.substring(0, stringSizeBlock - 1);
 
-        //TODO - detect whether or not we need to remove the last block from the block manager
+            currentBlockString = subStringCurrentBlock;
 
+            int stringSizeText = currentText.length();
+            String subStringCurrentText = currentText.substring(0, stringSizeText - 1);
+
+            setText(subStringCurrentText);
+
+            Log.i(TAG, "Current text after: " + currentText);
+            Log.i(TAG, "Current text block after: " + currentBlockString);
+        } else {
+            /*if(!blockManager.isEmpty()) {
+                blockManager.pop();
+
+                currentBlockString = String.valueOf(((NumberBlock)blockManager.getFinalBlock()).getValue());
+
+                setText(currentBlockString);
+            }*/
+        }
     }
 
     /**
