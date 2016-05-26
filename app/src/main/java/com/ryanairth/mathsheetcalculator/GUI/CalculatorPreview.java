@@ -149,7 +149,7 @@ public class CalculatorPreview extends RelativeLayout {
                 resetPreview();
             }
 
-            //isEvaluated = false;
+            isEvaluated = false;
         }
 
         // If the entire string just contains zero, the default start point, set the current text to
@@ -207,6 +207,9 @@ public class CalculatorPreview extends RelativeLayout {
      * Processes the equals input, will calculate the final sum given and sets the preview text
      */
     private void processEquals() {
+        // FIXME - after hitting equals, entering new number starts new math sequence
+        // FIXME - result number gets added to block manager twice, causing error when calculating total
+
         updateCurrentBlockString(currentBlockString, true, false);
 
         Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
@@ -501,33 +504,35 @@ public class CalculatorPreview extends RelativeLayout {
      * Deletes the last input from preview text and block in the block manager
      */
     public void deleteLastInput() {
+        // TODO - delete symbol and roll back to previous block object when necessary
+        // FIXME - cannot delete more than once in a row, possibly due to substring
+
         Log.i(TAG, "Undoing last input");
-        // FIXME - deleting symbol causes StringIndexOutOfBounds else where
-        // FIXME - deletes two characters!
-        if(currentBlockString.length() != 0) {
-            Log.i(TAG, "Current text before: " + currentText);
-            Log.i(TAG, "Current text block before: " + currentBlockString);
 
-            int stringSizeBlock = currentBlockString.length();
-            String subStringCurrentBlock = currentBlockString.substring(0, stringSizeBlock - 1);
+        // If the currentText is greater than 0, then it's fine to go ahead and delete previous element
+        // of both the currentBlockString and the currentText
+        if(currentText.length() > 0) {
+            if(currentBlockString.length() > 0) {
+                int stringSizeBlock = currentBlockString.length();
+                String subStringCurrentBlock = currentBlockString.substring(0, stringSizeBlock - 1);
 
-            currentBlockString = subStringCurrentBlock;
+                // Set currentBlockString to the new block string which has the last element deleted
+                currentBlockString = subStringCurrentBlock;
 
-            int stringSizeText = currentText.length();
-            String subStringCurrentText = currentText.substring(0, stringSizeText - 1);
+                Log.i(TAG, "CurrentBlockString length: " + stringSizeBlock + ", sub string: " + subStringCurrentBlock);
 
-            setText(subStringCurrentText);
+                int stringSizeText = currentText.length();
+                String subStringCurrentText = currentText.substring(0, stringSizeText);
 
-            Log.i(TAG, "Current text after: " + currentText);
-            Log.i(TAG, "Current text block after: " + currentBlockString);
+                Log.i(TAG, "CurrentText length: " + stringSizeText + ", sub string: " + subStringCurrentText);
+
+                // Set currentText to the new string which has the last element deleted
+                setText(subStringCurrentText);
+            } else {
+                Log.e(TAG, "CurrentBlockString length is 0 or less");
+            }
         } else {
-            /*if(!blockManager.isEmpty()) {
-                blockManager.pop();
-
-                currentBlockString = String.valueOf(((NumberBlock)blockManager.getFinalBlock()).getValue());
-
-                setText(currentBlockString);
-            }*/
+            Log.e(TAG, "CurrentText length is 0 or less");
         }
     }
 
