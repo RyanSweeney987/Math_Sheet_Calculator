@@ -123,9 +123,7 @@ public class CalculatorPreview extends RelativeLayout {
 
         // Initialize the currentBlockString so it's empty rather than null
         currentBlockString = "";
-
-        // Create the autoscrollers
-
+        currentText = "0";
     }
 
     /**
@@ -134,7 +132,7 @@ public class CalculatorPreview extends RelativeLayout {
      * @param value Value of the button pressed can be digit or math symbol (+,- etc)
      */
     public void updatePreview(char value) {
-        currentText = previewTextMain.getText().toString();
+        //currentText = previewTextMain.getText().toString();
         lastChar = currentText.charAt(currentText.length() - 1);
 
         // In order to avoid a null pointer exception, we can only do this when there are two or
@@ -155,22 +153,17 @@ public class CalculatorPreview extends RelativeLayout {
         // If the entire string just contains zero, the default start point, set the current text to
         // an empty string
         if(currentText.equals("0")) {
+            currentText = "";
+
             switch (value) {
                 case '-':
-                    currentText = "";
-
                     processMinus();
                     break;
                 case '.':
-                    currentText = "";
-
                     processDecimal();
-
                     break;
                 default:
                     if(Character.isDigit(value)) {
-                        currentText = "";
-
                         processDigit(value);
                     }
             }
@@ -200,6 +193,7 @@ public class CalculatorPreview extends RelativeLayout {
         Log.i(TAG, "Last char: " + lastChar);
         Log.i(TAG, "Current char: " + value);
         Log.i(TAG, "Current block string value: " + currentBlockString);
+        Log.i(TAG, "Current text value: " + currentText);
         Log.e(TAG, DASH_SEPARATOR);
     }
 
@@ -207,9 +201,6 @@ public class CalculatorPreview extends RelativeLayout {
      * Processes the equals input, will calculate the final sum given and sets the preview text
      */
     private void processEquals() {
-        // FIXME - after hitting equals, entering new number starts new math sequence
-        // FIXME - result number gets added to block manager twice, causing error when calculating total
-
         updateCurrentBlockString(currentBlockString, true, false);
 
         Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
@@ -234,8 +225,6 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextTotal.setText("");
         // Update the current block
         currentBlockString = sumString;
-
-        updateCurrentBlockString(currentBlockString, true, false);
 
         // Set the isEvaluated boolean for logic that deals with further input after = has been pressed
         isEvaluated = true;
@@ -367,8 +356,11 @@ public class CalculatorPreview extends RelativeLayout {
      * @param updatedText the text that we want the preview texts to display
      */
     private void setText(String updatedText) {
+        Log.i(TAG, "Setting text to: " + updatedText);
+
         // Update text
         previewTextMain.setText(updatedText);
+        currentText = updatedText;
 
         // If there's more than one block
         if(blockManager.getBlocks().size() != 0) {
@@ -488,7 +480,7 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextTotal.setText("0");
 
         currentBlockString = "";
-        currentText = "";
+        currentText = "0";
 
         // Reset the block manager, deleting all blocks
         blockManager.reset();
@@ -505,13 +497,12 @@ public class CalculatorPreview extends RelativeLayout {
      */
     public void deleteLastInput() {
         // TODO - delete symbol and roll back to previous block object when necessary
-        // FIXME - cannot delete more than once in a row, possibly due to substring
 
         Log.i(TAG, "Undoing last input");
 
         // If the currentText is greater than 0, then it's fine to go ahead and delete previous element
         // of both the currentBlockString and the currentText
-        if(currentText.length() > 0) {
+        if(currentText.length() > 0 && !(currentText.startsWith("0") && currentText.length() == 1)) {
             if(currentBlockString.length() > 0) {
                 int stringSizeBlock = currentBlockString.length();
                 String subStringCurrentBlock = currentBlockString.substring(0, stringSizeBlock - 1);
@@ -522,17 +513,23 @@ public class CalculatorPreview extends RelativeLayout {
                 Log.i(TAG, "CurrentBlockString length: " + stringSizeBlock + ", sub string: " + subStringCurrentBlock);
 
                 int stringSizeText = currentText.length();
-                String subStringCurrentText = currentText.substring(0, stringSizeText);
+                String subStringCurrentText = currentText.substring(0, stringSizeText - 1);
 
+                Log.i(TAG, "CurrentText: " + currentText);
                 Log.i(TAG, "CurrentText length: " + stringSizeText + ", sub string: " + subStringCurrentText);
 
                 // Set currentText to the new string which has the last element deleted
-                setText(subStringCurrentText);
+                if(subStringCurrentText.isEmpty()) {
+                    resetPreview();
+                } else {
+                    setText(subStringCurrentText);
+                }
             } else {
+                // TODO - go to previous block
                 Log.e(TAG, "CurrentBlockString length is 0 or less");
             }
         } else {
-            Log.e(TAG, "CurrentText length is 0 or less");
+            Log.i(TAG, "At beginning, nothing to undo");
         }
     }
 
@@ -550,37 +547,6 @@ public class CalculatorPreview extends RelativeLayout {
             return String.format("%s", number);
         }
     }
-
-    /*@Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        final int desiredWidth = 100;
-        final int desiredHeight = 100;
-
-        int width;
-        int height;
-
-        if(widthMode == MeasureSpec.EXACTLY) {
-            width = widthSize;
-        } else if(widthMode == MeasureSpec.AT_MOST) {
-            width = Math.max(desiredWidth, widthSize);
-        } else {
-            width = desiredWidth;
-        }
-
-        if(heightMode == MeasureSpec.EXACTLY) {
-            height = heightSize;
-        } else if(heightMode == MeasureSpec.AT_MOST) {
-            height = Math.max(desiredHeight, heightSize);
-        } else {
-            height = desiredHeight;
-        }
-
-        setMeasuredDimension(width, height);
-    }*/
 
     /**
      * Helper class for use with the View.post(Runnable) method.
