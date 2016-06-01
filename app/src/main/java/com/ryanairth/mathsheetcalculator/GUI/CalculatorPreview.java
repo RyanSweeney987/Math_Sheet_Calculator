@@ -9,9 +9,11 @@ import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ryanairth.mathsheetcalculator.Math.Block;
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
 import com.ryanairth.mathsheetcalculator.Math.NumberBlock;
+import com.ryanairth.mathsheetcalculator.MathObject_Deprecated.Symbol;
 import com.ryanairth.mathsheetcalculator.R;
 
 import java.util.ArrayList;
@@ -504,32 +506,68 @@ public class CalculatorPreview extends RelativeLayout {
         // of both the currentBlockString and the currentText
         if(currentText.length() > 0 && !(currentText.startsWith("0") && currentText.length() == 1)) {
             if(currentBlockString.length() > 0) {
+                // Get length of currentBlockString and use it in order to get substring
                 int stringSizeBlock = currentBlockString.length();
                 String subStringCurrentBlock = currentBlockString.substring(0, stringSizeBlock - 1);
 
                 // Set currentBlockString to the new block string which has the last element deleted
                 currentBlockString = subStringCurrentBlock;
 
+                Log.i(TAG, "CurrentBlockString: " + currentBlockString);
                 Log.i(TAG, "CurrentBlockString length: " + stringSizeBlock + ", sub string: " + subStringCurrentBlock);
 
-                int stringSizeText = currentText.length();
-                String subStringCurrentText = currentText.substring(0, stringSizeText - 1);
+                // Remove the last element from current text
+                removeLastTextElement();
 
-                Log.i(TAG, "CurrentText: " + currentText);
-                Log.i(TAG, "CurrentText length: " + stringSizeText + ", sub string: " + subStringCurrentText);
+                // If currentBlockString is empty we want to set it as the next thing
+                if(currentBlockString.isEmpty()) {
+                    // FIXME - issue with next number and adding new one
+                    Log.e(TAG, "CurrentBlockString length is 0 or less");
 
-                // Set currentText to the new string which has the last element deleted
-                if(subStringCurrentText.isEmpty()) {
-                    resetPreview();
-                } else {
-                    setText(subStringCurrentText);
+                    Log.i(TAG, "Final block: " + blockManager.getFinalBlock().getValue());
+                    // Get the block that holds the data
+                    Block currentBlock = blockManager.getFinalBlock();
+
+                    // If the block holds a math operator we want the currentBlockString to hold it's
+                    // character value likewise for a number
+                    if(currentBlock.getValue() instanceof MathOperator) {
+                        Log.i(TAG, "Current block is a MathOperator");
+
+                        MathOperator operator = (MathOperator)currentBlock.getValue();
+
+                        currentBlockString = String.valueOf(operator.getSymbol());
+                    } else if(currentBlock.getValue() instanceof Double) {
+                        currentBlockString = String.valueOf(currentBlock.getValue());
+                        Log.i(TAG, "Current block is a number");
+                    }
+
+                    // Then we remove the element from the block manager
+                    blockManager.pop();
                 }
-            } else {
-                // TODO - go to previous block
-                Log.e(TAG, "CurrentBlockString length is 0 or less");
             }
         } else {
             Log.i(TAG, "At beginning, nothing to undo");
+        }
+
+        Log.e(TAG, DASH_SEPARATOR);
+    }
+
+    /**
+     * Helper method that removes the last element from the current text and then sets the preview
+     * text or resets it if there's nothing left
+     */
+    private void removeLastTextElement() {
+        int stringSizeText = currentText.length();
+        String subStringCurrentText = currentText.substring(0, stringSizeText - 1);
+
+        Log.i(TAG, "CurrentText: " + currentText);
+        Log.i(TAG, "CurrentText length: " + stringSizeText + ", sub string: " + subStringCurrentText);
+
+        // Set currentText to the new string which has the last element deleted
+        if(subStringCurrentText.isEmpty()) {
+            resetPreview();
+        } else {
+            setText(subStringCurrentText);
         }
     }
 
