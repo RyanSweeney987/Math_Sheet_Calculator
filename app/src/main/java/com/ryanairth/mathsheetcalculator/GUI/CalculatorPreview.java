@@ -5,19 +5,19 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
-import android.widget.NumberPicker;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ryanairth.mathsheetcalculator.Exceptions.InvalidMathOperatorException;
 import com.ryanairth.mathsheetcalculator.Math.Block;
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
-import com.ryanairth.mathsheetcalculator.Math.NumberBlock;
-import com.ryanairth.mathsheetcalculator.MathObject_Deprecated.Symbol;
 import com.ryanairth.mathsheetcalculator.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
 
@@ -215,7 +215,20 @@ public class CalculatorPreview extends RelativeLayout {
             sum = blockManager.getBlockEvaluator().calculateTotal();
         } catch (ClassCastException e) {
             Log.e(TAG, "Blocks: " + blockManager.toString());
-            e.printStackTrace();
+
+            String exception = Log.getStackTraceString(e);
+
+            Log.e(TAG, exception);
+        } catch (InvalidMathOperatorException e) {
+            Log.e(TAG, "Exception occurred when calculating total, invalid math operator found");
+
+            String exception = Log.getStackTraceString(e);
+
+            Log.e(TAG, exception);
+
+            // TODO - show popup explaining that an error has occurred - when internet is fixed
+
+            resetPreview();
         }
 
         // Format it so it's presentable
@@ -394,7 +407,7 @@ public class CalculatorPreview extends RelativeLayout {
     }
 
     /**
-     * Method that scrolls both texts to the end in a given direction, uses View.FOCUS_LEFT/RIGHT
+     * Scrolls both texts to the end in a given direction, uses View.FOCUS_LEFT/RIGHT
      *
      * @param direction direction to scroll the text in
      */
@@ -412,8 +425,7 @@ public class CalculatorPreview extends RelativeLayout {
         }
     }
     /**
-     * Helper method that updates the currentBlockString as well as modifying the block manager
-     * to have the latest data
+     * Updates the currentBlockString as well as modifying the block manager to have the latest data
      *
      * @param value The value to be added to the block string
      * @param finishedState Whether or not the call to this should add to the block manager
@@ -498,8 +510,6 @@ public class CalculatorPreview extends RelativeLayout {
      * Deletes the last input from preview text and block in the block manager
      */
     public void deleteLastInput() {
-        // TODO - delete symbol and roll back to previous block object when necessary
-
         Log.i(TAG, "Undoing last input");
 
         // If the currentText is greater than 0, then it's fine to go ahead and delete previous element
@@ -521,10 +531,8 @@ public class CalculatorPreview extends RelativeLayout {
 
                 // If currentBlockString is empty we want to set it as the next thing
                 if(currentBlockString.isEmpty()) {
-                    // FIXME - issue with next number and adding new one
                     Log.e(TAG, "CurrentBlockString length is 0 or less");
 
-                    Log.i(TAG, "Final block: " + blockManager.getFinalBlock().getValue());
                     // Get the block that holds the data
                     Block currentBlock = blockManager.getFinalBlock();
 
@@ -537,9 +545,14 @@ public class CalculatorPreview extends RelativeLayout {
 
                         currentBlockString = String.valueOf(operator.getSymbol());
                     } else if(currentBlock.getValue() instanceof Double) {
-                        currentBlockString = String.valueOf(currentBlock.getValue());
+                       // currentBlockString = String.valueOf(currentBlock.getValue());
+                        currentBlockString = formatNumber((Double)currentBlock.getValue());
+
                         Log.i(TAG, "Current block is a number");
                     }
+
+                    Log.i(TAG, "CurrentBlockString is now: " + currentBlockString);
+                    Log.i(TAG, "Is blockManager empty: " + blockManager.isEmpty());
 
                     // Then we remove the element from the block manager
                     blockManager.pop();
@@ -553,7 +566,7 @@ public class CalculatorPreview extends RelativeLayout {
     }
 
     /**
-     * Helper method that removes the last element from the current text and then sets the preview
+     * Removes the last element from the current text and then sets the preview
      * text or resets it if there's nothing left
      */
     private void removeLastTextElement() {
@@ -580,14 +593,15 @@ public class CalculatorPreview extends RelativeLayout {
      */
     public String formatNumber(double number) {
         if(number == (long) number) {
-            return String.format("%d", (long)number);
+            // Explicit locale to UK as default locale is apparently prone to bugs
+            return String.format(Locale.UK, "%d", (long)number);
         } else {
             return String.format("%s", number);
         }
     }
 
     /**
-     * Helper class for use with the View.post(Runnable) method.
+     * For use with the View.post(Runnable) method.
      * Scrolls the scroller along the X axis
      * Names of variables and purpose are self explanatory.
      *

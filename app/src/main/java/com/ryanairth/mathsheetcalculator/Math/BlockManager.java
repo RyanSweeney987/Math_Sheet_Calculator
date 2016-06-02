@@ -2,13 +2,7 @@ package com.ryanairth.mathsheetcalculator.Math;
 
 import android.util.Log;
 
-import com.ryanairth.mathsheetcalculator.Errors.InvalidMathOperatorError;
-import com.ryanairth.mathsheetcalculator.GUI.Box;
-import com.ryanairth.mathsheetcalculator.GUI.Line;
-import com.ryanairth.mathsheetcalculator.MathObject_Deprecated.Symbol;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.*;

@@ -2,7 +2,7 @@ package com.ryanairth.mathsheetcalculator.Math;
 
 import android.util.Log;
 
-import com.ryanairth.mathsheetcalculator.Errors.InvalidMathOperatorError;
+import com.ryanairth.mathsheetcalculator.Exceptions.InvalidMathOperatorException;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class BlockEvaluator {
      *
      * @return number representing the sum of the maths equation
      */
-    public double calculateTotal() {
+    public double calculateTotal() throws InvalidMathOperatorException {
         // If there aren't any elements in the blocks array, return zero
         if(blocks.size() <= 0) {
             Log.i(TAG, "Not enough blocks, returning zero");
@@ -43,7 +43,7 @@ public class BlockEvaluator {
         return evaluate();
     }
 
-    public double calculateCurrentTotal() {
+    public double calculateCurrentTotal() throws InvalidMathOperatorException {
         // If there aren't any elements in the blocks array, return zero
         if(blocks.size() <= 0) {
             Log.i(TAG, "Not enough blocks, returning zero");
@@ -62,7 +62,7 @@ public class BlockEvaluator {
         return evaluate();
     }
 
-    private double evaluate() {
+    private double evaluate() throws InvalidMathOperatorException {
         // Get the first number to start off
         double currentValue = 0.0;
 
@@ -106,7 +106,7 @@ public class BlockEvaluator {
                 default:
                     // Might not actually need to throw anything here, though, just hoping it would be useful
                     // perhaps it's an incorrect usage, not too used to throwing errors and exceptions
-                    throw new InvalidMathOperatorError("Error calculating total, math operator is: "
+                    throw new InvalidMathOperatorException("Error calculating total, math operator is: "
                             + MathOperator.NONE);
             }
         }
