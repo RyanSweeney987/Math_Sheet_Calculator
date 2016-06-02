@@ -17,6 +17,8 @@ import java.util.List;
  * Copyright information found in accompanying License.txt file.
  */
 public class CalculatorNumpad extends LinearLayout {
+    // TODO - better link to xml file
+
     /**
      * Grid layout to put the numbers and such in, for some reason this is really needed or odd gaps
      * appear between the buttons

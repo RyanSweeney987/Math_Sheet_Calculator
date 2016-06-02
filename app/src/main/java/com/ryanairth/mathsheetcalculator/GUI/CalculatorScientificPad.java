@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
  * Copyright information found in accompanying License.txt file.
  */
 public class CalculatorScientificPad extends LinearLayout {
+    // TODO - better link to xml file
+
     private GridLayout gridLayout;
 
     public CalculatorScientificPad(Context context, AttributeSet attrs) {
