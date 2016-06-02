@@ -16,6 +16,10 @@ public class BlockManager {
         List containing "blocks", each block represents a symbol or a number
      */
     private List<Block> blocks;
+    /*
+        Object specifically used to evaluate the blocks
+     */
+    private BlockEvaluator blockEvaluator;
 
     /**
      * BlockManager manages the numbers and symbols entered by the user in modular blocks, {@link BlockManager}
@@ -26,6 +30,7 @@ public class BlockManager {
      */
     public BlockManager() {
         blocks = new ArrayList<>();
+        blockEvaluator = new BlockEvaluator(blocks);
     }
 
     /**
@@ -72,31 +77,14 @@ public class BlockManager {
     }
 
     /**
-     * Calculate and return the sum of the maths equation entered by the user
+     * Get the {@link BlockEvaluator} used to calculate the final value of all the blocks entered by the user
      *
-     * @return number representing the sum of the maths equation
+     * @see BlockEvaluator
+     *
+     * @return block evaluator object
      */
-    public double getSum() {
-        // FIXME - fix so it actually calculates the sum of the math equation
-
-        double sum = 0.0;
-        double currentNumber = 0.0;
-        MathOperator currentSymbol = MathOperator.NONE;
-
-        Block currentBlock = null;
-        Block previousBlock = null;
-
-        for(int i = 0; i < blocks.size(); i++) {
-            currentBlock = blocks.get(i);
-
-            if(currentBlock instanceof NumberBlock) {
-                sum = ((NumberBlock)currentBlock).getValue();
-            } else if(currentBlock instanceof SymbolBlock) {
-
-            }
-        }
-
-        return sum;
+    public BlockEvaluator getBlockEvaluator() {
+        return blockEvaluator;
     }
 
     /**

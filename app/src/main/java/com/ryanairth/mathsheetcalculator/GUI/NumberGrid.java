@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.ryanairth.mathsheetcalculator.R;
 import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
@@ -19,16 +18,13 @@ import java.util.List;
  * Created by Ryan Airth (Sweeney) on 13-Sep-15.
  * Copyright information found in License.txt file.
  */
-public class NumberGrid extends View {
+public class NumberGrid extends LineGrid {
     private List<Container> containers;
-    private LineGrid lineGrid;
-    private Box selectedBox;
-    private int columns = 10, rows = 10;
-    private int boxWidth = 50, boxHeight = 50;
     private Paint numberColor;
 
     // TODO - remake so adds text components when needed
     // TODO - remake in general!
+    // TODO - DOCUMENT
 
     public NumberGrid(Context context) {
         this(context, null);
@@ -45,8 +41,6 @@ public class NumberGrid extends View {
     public NumberGrid(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
-        lineGrid = new LineGrid(context, 0, 0, 0, 0, new Paint());
-
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.NumberGrid, 0, 0);
 
         if(a == null) {
@@ -54,19 +48,19 @@ public class NumberGrid extends View {
         }
         
         try {
-            setColumns(a.getInteger(R.styleable.NumberGrid_n_g_columns, 10));
-            lineGrid.setColumns(columns);
-            setRows(a.getInteger(R.styleable.NumberGrid_n_g_rows, 10));
-            lineGrid.setRows(rows);
+            final int columns = a.getInteger(R.styleable.NumberGrid_n_g_columns, 10);
+            final int rows = a.getInteger(R.styleable.NumberGrid_n_g_rows, 10);
+            setColumns(columns);
+            setRows(rows);
 
-            setBoxDimensions(a.getDimensionPixelSize(R.styleable.NumberGrid_n_g_width, 50),
-                    a.getDimensionPixelSize(R.styleable.NumberGrid_n_g_height, 50));
-            lineGrid.setBoxDimensions(boxWidth, boxHeight);
+            final int width = a.getDimensionPixelSize(R.styleable.NumberGrid_n_g_width, 50);
+            final int height = a.getDimensionPixelSize(R.styleable.NumberGrid_n_g_height, 50);
+            setBoxDimensions(width, height);
 
             Paint temp = new Paint();
             temp.setColor(a.getColor(R.styleable.NumberGrid_n_g_line_color, 0));
             temp.setStrokeWidth(a.getFloat(R.styleable.NumberGrid_n_g_line_stroke, 0));
-            lineGrid.setLineColor(temp);
+            setLinePaint(temp);
 
             temp = new Paint();
             temp.setColor(a.getColor(R.styleable.NumberGrid_n_g_number_color, 0));
@@ -78,25 +72,12 @@ public class NumberGrid extends View {
         }
     }
 
-    public void setColumns(int columns) {
-        this.columns = columns;
-    }
-
-    public void setRows(int rows) {
-        this.rows = rows;
-    }
-
-    public void setBoxDimensions(int boxWidth, int boxHeight) {
-        this.boxWidth = boxWidth;
-        this.boxHeight = boxHeight;
-    }
-
     public void setNumberColor(Paint numberColor) {
         this.numberColor = numberColor;
     }
 
     protected void init() {
-        lineGrid.init();
+        super.init();
 
         // Create array containing all the number containers
         containers = new ArrayList<>();
@@ -112,12 +93,13 @@ public class NumberGrid extends View {
 
                 // TODO - ensure that things are taken care of in terms of moving view
                 // When pressed down, set the box to be drawn lines
-                selectedBox = lineGrid.getBox(e.getX(), e.getY());
+                setSelectedBox(getBox(e.getX(), e.getY()));
 
                 Log.i(TAG, "Action down X: " + e.getX() + ", Y: " + e.getY());
 
                 // Set the states of the lines so the color changes
-                selectedBox.setPaint(LineStates.PRESSED.getPaint());
+
+                getSelectedBox().setPaint(LineStates.PRESSED.getPaint());
 
                 // Redraw screen with updates
                 invalidate();
@@ -128,7 +110,7 @@ public class NumberGrid extends View {
 
                 return true;
             case MotionEvent.ACTION_UP:
-                selectedBox.setPaint(LineStates.RELEASED.getPaint());
+                getSelectedBox().setPaint(LineStates.RELEASED.getPaint());
 
                 invalidate();
 

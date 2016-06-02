@@ -33,6 +33,5 @@
             android:layout_height="match_parent"
             android:layout_gravity="center">
         </com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad>
-
     </com.ryanairth.mathsheetcalculator.GUI.PadSlider>
 </RelativeLayout>

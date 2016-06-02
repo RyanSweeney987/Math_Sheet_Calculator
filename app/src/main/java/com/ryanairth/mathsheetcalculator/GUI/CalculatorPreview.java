@@ -5,17 +5,19 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ryanairth.mathsheetcalculator.Exceptions.InvalidMathOperatorException;
 import com.ryanairth.mathsheetcalculator.Math.Block;
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
 import com.ryanairth.mathsheetcalculator.R;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
+import java.util.Locale;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
 
@@ -24,8 +26,7 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  * Copyright information found in accompanying License.txt file.
  */
 public class CalculatorPreview extends RelativeLayout {
-    // TODO - make so that if user enters a number after hitting '=', they start off with the previous value
-    final String DASH_SEPERATOR = "------------------------------------------------------";
+    final String DASH_SEPARATOR = "------------------------------------------------------";
 
     /*
         Text view for the numbers and symbols
@@ -59,6 +60,10 @@ public class CalculatorPreview extends RelativeLayout {
         Second last character in current text
      */
     private char secondLastChar;
+    /*
+        Boolean to see if the equation has currently been evaluated (equals sign has been pressed)
+     */
+    private boolean isEvaluated;
 
     /**
      * Box used to preview the numbers the user has entered
@@ -120,6 +125,7 @@ public class CalculatorPreview extends RelativeLayout {
 
         // Initialize the currentBlockString so it's empty rather than null
         currentBlockString = "";
+        currentText = "0";
     }
 
     /**
@@ -128,7 +134,7 @@ public class CalculatorPreview extends RelativeLayout {
      * @param value Value of the button pressed can be digit or math symbol (+,- etc)
      */
     public void updatePreview(char value) {
-        currentText = previewTextMain.getText().toString();
+        //currentText = previewTextMain.getText().toString();
         lastChar = currentText.charAt(currentText.length() - 1);
 
         // In order to avoid a null pointer exception, we can only do this when there are two or
@@ -137,24 +143,29 @@ public class CalculatorPreview extends RelativeLayout {
             secondLastChar = currentText.charAt(currentText.length() - 2);
         }
 
+        // If the calculation was recently evaluated we need to do certain things based on the next input
+        if(isEvaluated) {
+            if(Character.isDigit(value)) {
+                resetPreview();
+            }
+
+            isEvaluated = false;
+        }
+
         // If the entire string just contains zero, the default start point, set the current text to
         // an empty string
         if(currentText.equals("0")) {
+            currentText = "";
+
             switch (value) {
                 case '-':
-                    resetCurrentText("Current text = '0', resetting to allow new value");
-
                     processMinus();
                     break;
                 case '.':
-                    resetCurrentText("Current text = '0', resetting to allow new value");
-
                     processDecimal();
                     break;
                 default:
                     if(Character.isDigit(value)) {
-                        resetCurrentText("Current text = '0', resetting to allow new value");
-
                         processDigit(value);
                     }
             }
@@ -184,46 +195,56 @@ public class CalculatorPreview extends RelativeLayout {
         Log.i(TAG, "Last char: " + lastChar);
         Log.i(TAG, "Current char: " + value);
         Log.i(TAG, "Current block string value: " + currentBlockString);
-        Log.i(TAG, DASH_SEPERATOR);
-    }
-
-    /**
-     * Pretty much a temporary helper method
-     *
-     * @param logString what to display before making changes
-     */
-    private void resetCurrentText(String logString) {
-        Log.i(TAG, logString);
-
-        currentText = "";
-
         Log.i(TAG, "Current text value: " + currentText);
+        Log.e(TAG, DASH_SEPARATOR);
     }
 
     /**
      * Processes the equals input, will calculate the final sum given and sets the preview text
      */
     private void processEquals() {
-        // FIXME: 04/05/2016
-
-
-        // Get sum from block manager
-        double sum = blockManager.getSum();
-        // Format it so it's presentable
-        String sumString = formatNumber(sum);
-
-        // We'll need this later
-        String currentBlock = currentBlockString;
-        // Reset the preview
-        resetPreview();
-        // Set the current block string to last value
-        updateCurrentBlockString(currentBlock, true, false);
-        // Set so that the answer is in the larger text
-        previewTextMain.setText(sumString);
-        previewTextTotal.setText("");
+        updateCurrentBlockString(currentBlockString, true, false);
 
         Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
                 + blockManager.toString() + "::Blocks::");
+
+        // Get sum from block manager
+        double sum = 0.0;
+        // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
+        try {
+            sum = blockManager.getBlockEvaluator().calculateTotal();
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Blocks: " + blockManager.toString());
+
+            String exception = Log.getStackTraceString(e);
+
+            Log.e(TAG, exception);
+        } catch (InvalidMathOperatorException e) {
+            Log.e(TAG, "Exception occurred when calculating total, invalid math operator found");
+
+            String exception = Log.getStackTraceString(e);
+
+            Log.e(TAG, exception);
+
+            // TODO - show popup explaining that an error has occurred - when internet is fixed
+
+            resetPreview();
+        }
+
+        // Format it so it's presentable
+        String sumString = formatNumber(sum);
+        // Reset the preview
+        resetPreview();
+        // Set current text and reset the preview text total to null
+        setText(sumString);
+        previewTextTotal.setText("");
+        // Update the current block
+        currentBlockString = sumString;
+
+        // Set the isEvaluated boolean for logic that deals with further input after = has been pressed
+        isEvaluated = true;
+
+        scrollText(FOCUS_LEFT);
     }
 
     /**
@@ -233,14 +254,20 @@ public class CalculatorPreview extends RelativeLayout {
      */
     private void processDigit(final char digit) {
         // If it's a digit, set text
-        setTextAndScroll(currentText + digit);
+        setText(currentText + digit);
 
-        if(!Character.isDigit(lastChar) && lastChar != '.' && lastChar != '-') {
-            // If following a symbol except minus or decimal start again otherwise we gots to
+        if(!Character.isDigit(lastChar) && lastChar != '.' && lastChar != '-' && lastChar != '\u0000') {
+            // If following a symbol except minus or decimal start again otherwise we have to
             // add it to the current block string
             updateCurrentBlockString(String.valueOf(digit), true, false);
-        } else if(lastChar == '-' && (!Character.isDigit(secondLastChar) || secondLastChar == '#')) {
-            updateCurrentBlockString(String.valueOf(digit), false, false);
+        } else if(lastChar == '-') {
+            // If second last character isn't a number or is the null character, include minus
+            if(!Character.isDigit(secondLastChar) || secondLastChar == '#') {
+                updateCurrentBlockString(String.valueOf(digit), false, false);
+            } else {
+                // Otherwise minus is being used as an operator in this instance
+                updateCurrentBlockString(String.valueOf(digit), true, false);
+            }
         } else {
             updateCurrentBlockString(String.valueOf(digit), false, false);
         }
@@ -258,16 +285,16 @@ public class CalculatorPreview extends RelativeLayout {
             // If the case is that it's at the beginning automatically add a zero if the decimal
             // is pressed
             if(currentText.equals("") || currentText.equals("0")) {
-                setTextAndScroll(currentText + 0 + DECIMAL);
+                setText(currentText + 0 + DECIMAL);
 
                 updateCurrentBlockString(0 + String.valueOf(DECIMAL), true, false);
             } else if(Character.isDigit(lastChar)) {
-                setTextAndScroll(currentText + DECIMAL);
+                setText(currentText + DECIMAL);
 
                 updateCurrentBlockString(String.valueOf(DECIMAL), false, false);
             } else {
                 // To handle any case where the previous value isn't a number, much like the beginning
-                setTextAndScroll(currentText + 0 + DECIMAL);
+                setText(currentText + 0 + DECIMAL);
 
                 // Also include for the case where we want a negative decimal and the user just presses
                 // decimal to automatically add the zero
@@ -289,28 +316,28 @@ public class CalculatorPreview extends RelativeLayout {
 
         // For the first entry
         if(currentText.equals("") || currentText.equals("0")) {
-            setTextAndScroll(currentText + MINUS);
+            setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), true, false);
         }
         // If the last character is a number, we're specifically looking to take away from it
         if(Character.isDigit(lastChar)) {
-            setTextAndScroll(currentText + MINUS);
+            setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), true, false);
         }
         // Otherwise we are starting a new, negative number however, we can only ever have a
         // symbol followed by a minus, nothing else
         if(secondLastChar != '#' && !Character.isDigit(lastChar) && Character.isDigit(secondLastChar)) {
-            setTextAndScroll(currentText + MINUS);
+            setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), true, false);
         }
     }
 
     /**
-     * Processes symbols, pretty much everything except digits, decimal and minus, so plus, mult, divide
-     * , percentage etc
+     * Processes symbols, pretty much everything except digits, decimal and minus, so plus, mult,
+     * divide, percentage etc
      */
     private void processSymbol(final char symbol) {
         // If the last character is a minus
@@ -319,7 +346,7 @@ public class CalculatorPreview extends RelativeLayout {
                 updateCurrentBlockString(String.valueOf(currentText), true, false);
             }*/
 
-            setTextAndScroll(currentText + symbol);
+            setText(currentText + symbol);
 
             updateCurrentBlockString(String.valueOf(symbol), true, false);
         }
@@ -331,7 +358,7 @@ public class CalculatorPreview extends RelativeLayout {
             if(Character.isDigit(secondLastChar)) {
                 String subString = currentText.substring(0, currentText.length() - 1);
 
-                setTextAndScroll(subString + symbol);
+                setText(subString + symbol);
 
                 updateCurrentBlockString(String.valueOf(symbol), true, true);
             }
@@ -343,27 +370,62 @@ public class CalculatorPreview extends RelativeLayout {
      *
      * @param updatedText the text that we want the preview texts to display
      */
-    private void setTextAndScroll(String updatedText) {
-        // TODO - update text so that total shows total sum and main shows the current entry give by the user
+    private void setText(String updatedText) {
+        Log.i(TAG, "Setting text to: " + updatedText);
 
         // Update text
         previewTextMain.setText(updatedText);
+        currentText = updatedText;
 
-        // TODO - show total
+        // If there's more than one block
         if(blockManager.getBlocks().size() != 0) {
-            double sum = blockManager.getSum();
+            Log.i(TAG, "Showing total");
+
+            double sum = 0.0;
+
+            // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
+            try {
+                sum = blockManager.getBlockEvaluator().calculateCurrentTotal();
+            } catch (Exception e) {
+                Log.e(TAG, blockManager.toString());
+
+                StringBuilder stackTrace = new StringBuilder();
+
+                for(StackTraceElement elem : e.getStackTrace()) {
+                    stackTrace.append(elem.toString());
+                    stackTrace.append(System.getProperty("line.separator"));
+                }
+
+                Log.e("AndroidRuntime: ", stackTrace.toString());
+            }
+
 
             previewTextTotal.setText(formatNumber(sum));
         }
 
-        // Scroll to end
-        scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));
-        scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getRight()));
+        scrollText(FOCUS_RIGHT);
     }
 
     /**
-     * Helper method that updates the currentBlockString as well as modifying the block manager
-     * to have the latest data
+     * Scrolls both texts to the end in a given direction, uses View.FOCUS_LEFT/RIGHT
+     *
+     * @param direction direction to scroll the text in
+     */
+    private void scrollText(int direction) {
+        Log.e(TAG, "Scrolling text, isEvaluated: " + isEvaluated);
+        switch (direction) {
+            case FOCUS_LEFT:
+                scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getLeft()));
+                scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getLeft()));
+                break;
+            case FOCUS_RIGHT:
+                scrollViewMain.post(new HorizontalAutoScroller(scrollViewMain, scrollViewMain.getChildAt(0).getRight()));
+                scrollViewTotal.post(new HorizontalAutoScroller(scrollViewTotal, scrollViewTotal.getChildAt(0).getRight()));
+                break;
+        }
+    }
+    /**
+     * Updates the currentBlockString as well as modifying the block manager to have the latest data
      *
      * @param value The value to be added to the block string
      * @param finishedState Whether or not the call to this should add to the block manager
@@ -380,11 +442,15 @@ public class CalculatorPreview extends RelativeLayout {
                     Double number = Double.parseDouble(currentBlockString);
                     blockManager.createAndAddBlock(number);
                 } catch (NumberFormatException e) {
-                    Log.i(TAG, "Failed parsing a number, adding character!");
+                    Log.w(TAG, "Failed parsing a number, adding character!");
 
-                    blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    if(currentBlockString.length() > 0) {
+                        blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    } else {
+                        Log.e(TAG, "Failed to add character, currentBlockString is empty");
+                    }
 
-                    Log.i(TAG, DASH_SEPERATOR);
+                    Log.i(TAG, DASH_SEPARATOR);
                 }
 
                 currentBlockString = value;
@@ -393,11 +459,16 @@ public class CalculatorPreview extends RelativeLayout {
                     Double number = Double.parseDouble(currentBlockString);
                     blockManager.createAndAddBlock(number);
                 } catch(NumberFormatException e) {
-                    Log.i(TAG, "Failed parsing a number, adding character!");
+                    Log.w(TAG, "Failed parsing a number, adding character!");
 
-                    blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    if(currentBlockString.length() > 0) {
+                        blockManager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+                    } else {
+                        Log.e(TAG, "Failed to add character, currentBlockString is empty");
+                    }
 
-                    Log.i(TAG, DASH_SEPERATOR);
+
+                    Log.i(TAG, DASH_SEPARATOR);
                 }
 
                 currentBlockString = value;
@@ -406,7 +477,7 @@ public class CalculatorPreview extends RelativeLayout {
             Log.i(TAG, "Number of blocks: " + blockManager.getBlocks().size());
             Log.i(TAG, "First on deque: " + blockManager.getFirstBlock());
             Log.i(TAG, "Last on deque: " + blockManager.getFinalBlock());
-            Log.i(TAG, DASH_SEPERATOR);
+            Log.e(TAG, DASH_SEPARATOR);
         } else {
             currentBlockString += value;
         }
@@ -422,8 +493,8 @@ public class CalculatorPreview extends RelativeLayout {
         previewTextMain.setText("0");
         previewTextTotal.setText("0");
 
-        // Reset the currentBlockString to an empty string
         currentBlockString = "";
+        currentText = "0";
 
         // Reset the block manager, deleting all blocks
         blockManager.reset();
@@ -431,6 +502,8 @@ public class CalculatorPreview extends RelativeLayout {
         // Reset last and second last char parameters to the null value (aka: "/0")
         lastChar = 0;
         secondLastChar = 0;
+
+        isEvaluated = false;
     }
 
     /**
@@ -439,9 +512,76 @@ public class CalculatorPreview extends RelativeLayout {
     public void deleteLastInput() {
         Log.i(TAG, "Undoing last input");
 
+        // If the currentText is greater than 0, then it's fine to go ahead and delete previous element
+        // of both the currentBlockString and the currentText
+        if(currentText.length() > 0 && !(currentText.startsWith("0") && currentText.length() == 1)) {
+            if(currentBlockString.length() > 0) {
+                // Get length of currentBlockString and use it in order to get substring
+                int stringSizeBlock = currentBlockString.length();
+                String subStringCurrentBlock = currentBlockString.substring(0, stringSizeBlock - 1);
 
-        //TODO - detect whether or not we need to remove the last block from the block manager
+                // Set currentBlockString to the new block string which has the last element deleted
+                currentBlockString = subStringCurrentBlock;
 
+                Log.i(TAG, "CurrentBlockString: " + currentBlockString);
+                Log.i(TAG, "CurrentBlockString length: " + stringSizeBlock + ", sub string: " + subStringCurrentBlock);
+
+                // Remove the last element from current text
+                removeLastTextElement();
+
+                // If currentBlockString is empty we want to set it as the next thing
+                if(currentBlockString.isEmpty()) {
+                    Log.e(TAG, "CurrentBlockString length is 0 or less");
+
+                    // Get the block that holds the data
+                    Block currentBlock = blockManager.getFinalBlock();
+
+                    // If the block holds a math operator we want the currentBlockString to hold it's
+                    // character value likewise for a number
+                    if(currentBlock.getValue() instanceof MathOperator) {
+                        Log.i(TAG, "Current block is a MathOperator");
+
+                        MathOperator operator = (MathOperator)currentBlock.getValue();
+
+                        currentBlockString = String.valueOf(operator.getSymbol());
+                    } else if(currentBlock.getValue() instanceof Double) {
+                       // currentBlockString = String.valueOf(currentBlock.getValue());
+                        currentBlockString = formatNumber((Double)currentBlock.getValue());
+
+                        Log.i(TAG, "Current block is a number");
+                    }
+
+                    Log.i(TAG, "CurrentBlockString is now: " + currentBlockString);
+                    Log.i(TAG, "Is blockManager empty: " + blockManager.isEmpty());
+
+                    // Then we remove the element from the block manager
+                    blockManager.pop();
+                }
+            }
+        } else {
+            Log.i(TAG, "At beginning, nothing to undo");
+        }
+
+        Log.e(TAG, DASH_SEPARATOR);
+    }
+
+    /**
+     * Removes the last element from the current text and then sets the preview
+     * text or resets it if there's nothing left
+     */
+    private void removeLastTextElement() {
+        int stringSizeText = currentText.length();
+        String subStringCurrentText = currentText.substring(0, stringSizeText - 1);
+
+        Log.i(TAG, "CurrentText: " + currentText);
+        Log.i(TAG, "CurrentText length: " + stringSizeText + ", sub string: " + subStringCurrentText);
+
+        // Set currentText to the new string which has the last element deleted
+        if(subStringCurrentText.isEmpty()) {
+            resetPreview();
+        } else {
+            setText(subStringCurrentText);
+        }
     }
 
     /**
@@ -453,45 +593,15 @@ public class CalculatorPreview extends RelativeLayout {
      */
     public String formatNumber(double number) {
         if(number == (long) number) {
-            return String.format("%d", (long)number);
+            // Explicit locale to UK as default locale is apparently prone to bugs
+            return String.format(Locale.UK, "%d", (long)number);
         } else {
             return String.format("%s", number);
         }
     }
 
-    /*@Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        final int desiredWidth = 100;
-        final int desiredHeight = 100;
-
-        int width;
-        int height;
-
-        if(widthMode == MeasureSpec.EXACTLY) {
-            width = widthSize;
-        } else if(widthMode == MeasureSpec.AT_MOST) {
-            width = Math.max(desiredWidth, widthSize);
-        } else {
-            width = desiredWidth;
-        }
-
-        if(heightMode == MeasureSpec.EXACTLY) {
-            height = heightSize;
-        } else if(heightMode == MeasureSpec.AT_MOST) {
-            height = Math.max(desiredHeight, heightSize);
-        } else {
-            height = desiredHeight;
-        }
-
-        setMeasuredDimension(width, height);
-    }*/
-
     /**
-     * Helper class for use with the View.post(Runnable) method.
+     * For use with the View.post(Runnable) method.
      * Scrolls the scroller along the X axis
      * Names of variables and purpose are self explanatory.
      *
