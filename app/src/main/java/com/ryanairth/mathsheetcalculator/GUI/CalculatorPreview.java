@@ -530,7 +530,7 @@ public class CalculatorPreview extends RelativeLayout {
                 removeLastTextElement();
 
                 // If currentBlockString is empty we want to set it as the next thing
-                if(currentBlockString.isEmpty()) {
+                if(currentBlockString.isEmpty() && !blockManager.isEmpty()) {
                     Log.e(TAG, "CurrentBlockString length is 0 or less");
 
                     // Get the block that holds the data
