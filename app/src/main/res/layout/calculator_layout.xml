@@ -20,7 +20,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@id/calculator_pad_slider"
-        android:layout_below="@id/calculator_preview">
+        android:layout_below="@id/calculator_preview"
+        android:showDividers="beginning">
+
+        <com.ryanairth.mathsheetcalculator.GUI.Menu
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+        </com.ryanairth.mathsheetcalculator.GUI.Menu>
 
         <com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad
             android:layout_width="wrap_content"

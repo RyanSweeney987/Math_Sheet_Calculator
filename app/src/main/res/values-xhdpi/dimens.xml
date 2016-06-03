@@ -12,7 +12,7 @@
     // Calculator
     <dimen name="calc_single_width_dp">85dp</dimen>
     <dimen name="calc_single_height_dp">85dp</dimen>
-    <dimen name="calc_double_width_dp">180dp</dimen>
+    <dimen name="calc_double_width_dp">170dp</dimen>
     <dimen name="calc_double_height_dp">154dp</dimen>
     <dimen name="calc_text_size_sp">32sp</dimen>
     <dimen name="calc_margin_dp">30dp</dimen>

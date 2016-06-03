@@ -32,6 +32,11 @@ public class PadSlider extends LinearLayout {
         init(context);
     }
 
+    public void setCurrentPage(int pageNumber) {
+        viewPager.setCurrentItem(pageNumber);
+       // viewPager.arrowScroll(View.FOCUS_RIGHT);
+    }
+
     /**
      * Adds the view to pagerViews list
      *
