@@ -5,10 +5,5 @@ package com.ryanairth.mathsheetcalculator.Math;
  * Copyright information found in accompanying License.txt file.
  */
 public interface Block<T> {
-    public T getValue();
-    public Block getParent();
-    public Block getChild();
-    public boolean hasParent();
-    public boolean hasChild();
-    public void setChild(Block block);
+    T getValue();
 }

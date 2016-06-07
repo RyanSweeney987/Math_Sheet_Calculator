@@ -10,18 +10,22 @@
     <dimen name="previous_number_dp">10dp</dimen>
     <dimen name="number_padding_dp">1dp</dimen>
     // Calculator
-    <dimen name="calc_single_width_dp">85dp</dimen>
-    <dimen name="calc_single_height_dp">85dp</dimen>
-    <dimen name="calc_double_width_dp">170dp</dimen>
+    <dimen name="calc_single_width_dp">84dp</dimen>
+    <dimen name="calc_single_height_dp">84dp</dimen>
+    <dimen name="calc_double_width_dp">168dp</dimen>
     <dimen name="calc_double_height_dp">154dp</dimen>
     <dimen name="calc_text_size_sp">32sp</dimen>
     <dimen name="calc_margin_dp">30dp</dimen>
     // Calc preview
     <dimen name="prev_text_width_dp">480dp</dimen>
-    <dimen name="prev_text_height_dp">142dp</dimen>
+    <dimen name="prev_text_height_dp">147dp</dimen>
     <dimen name="prev_text_icons_height_dp">20dp</dimen>
     <dimen name="prev_text_main_size_sp">50sp</dimen>
     <dimen name="prev_text_total_size_sp">40sp</dimen>
     <dimen name="prev_text_margin_main_dp">5dp</dimen>
     <dimen name="prev_text_margin_total_dp">10dp</dimen>
+    <dimen name="prev_text_margin_right_dp">6dp</dimen>
+    <dimen name="prev_text_margin_left_dp">6dp</dimen>
+    <dimen name="prev_text_fading_edge_dp">10dp</dimen>
+    <dimen name="prev_splitter_bar_dp">2dp</dimen>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -22,19 +23,40 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  * Copyright information found in accompanying License.txt file.
  */
 public class PadSlider extends LinearLayout {
+    /*
+        Pager that contains the adapter, used for the tabs
+     */
     private ViewPager viewPager;
+    /*
+        Adapter, responsible for handling the view withing the pager and going between them
+     */
     private PagerAdapter pagerAdapter;
+    /*
+        List of views to swap with
+     */
     private List<View> pagerViews;
 
+    /**
+     * Holds and handles a {@link ViewPager}, {@link PagerAdapter} and views used with these.
+     * Add views wanted for the {@link ViewPager} in the pad_slider_layout.xml file with the top
+     * level parent being a {@link ViewPager}. View get processed automatically.
+     *
+     * @param context context required to create this and other views
+     * @param attrs attributes, no custom attributes are used
+     */
     public PadSlider(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         init(context);
     }
 
+    /**
+     * Sets the current page in the pager to display
+     *
+     * @param pageNumber number of view to display
+     */
     public void setCurrentPage(int pageNumber) {
         viewPager.setCurrentItem(pageNumber);
-       // viewPager.arrowScroll(View.FOCUS_RIGHT);
     }
 
     /**
@@ -61,6 +83,11 @@ public class PadSlider extends LinearLayout {
         // Inflate the view pager from the layout as opposed to instantiating it
         viewPager = (ViewPager)inflate(context, R.layout.pad_slider_layout ,null);
         pagerAdapter = new ScreenSlidePagerAdapter(context);
+
+        Log.e(TAG, "Child view count: " + getChildCount());
+        for(int i = 0; i < viewPager.getChildCount(); i++) {
+            pagerViews.add(viewPager.getChildAt(i));
+        }
 
         viewPager.setAdapter(pagerAdapter);
 
@@ -100,11 +127,5 @@ public class PadSlider extends LinearLayout {
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
-
-        /*@Override
-        public CharSequence getPageTitle(int position) {
-            PagerEnum pagerEnum = PagerEnum.values()[position];
-            return context.getString(pagerEnum.getTitleId());
-        }*/
     }
 }

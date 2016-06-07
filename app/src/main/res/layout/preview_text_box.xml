@@ -15,7 +15,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="@dimen/prev_splitter_bar_dp"
         android:background="#adadad"
         android:id="@id/preview_splitter_bar"
         android:layout_alignParentBottom="true">
@@ -25,10 +25,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/preview_icons_bar"
+
         android:layout_marginTop="@dimen/prev_text_margin_main_dp"
+        android:layout_marginEnd="@dimen/prev_text_margin_right_dp"
+        android:layout_marginRight="@dimen/prev_text_margin_right_dp"
+        android:layout_marginStart="@dimen/prev_text_margin_left_dp"
+        android:layout_marginLeft="@dimen/prev_text_margin_left_dp"
+
         android:id="@id/preview_hscrollv_main"
-        android:scrollbars="none">
+        android:scrollbars="none"
+
+        android:fadingEdge="horizontal"
+        android:requiresFadingEdge="horizontal"
+        android:fadingEdgeLength="@dimen/prev_text_fading_edge_dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,10 +55,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_above="@id/preview_splitter_bar"
-        android:layout_marginTop="@dimen/prev_text_margin_total_dp"
+        android:layout_marginTop="@dimen/prev_text_margin_main_dp"
+        android:layout_marginEnd="@dimen/prev_text_margin_right_dp"
+        android:layout_marginRight="@dimen/prev_text_margin_right_dp"
+        android:layout_marginStart="@dimen/prev_text_margin_left_dp"
+        android:layout_marginLeft="@dimen/prev_text_margin_left_dp"
+
         android:id="@id/preview_hscrollv_total"
-        android:scrollbars="none">
+        android:scrollbars="none"
+
+        android:fadingEdge="horizontal"
+        android:requiresFadingEdge="horizontal"
+        android:fadingEdgeLength="@dimen/prev_text_fading_edge_dp">
 
         <TextView
             android:layout_width="wrap_content"

@@ -25,11 +25,6 @@ public class CalculatorNumpad extends LinearLayout implements PreviewUpdateDispa
      */
     private GridLayout gridLayout;
     /**
-     * Button list, don't need it atm
-     */
-    // TODO find a use?
-    private List<Button> buttonList;
-    /**
      * Buttons that are numbers
      */
     private Button one, two, three, four, five, six, seven, eight, nine, zero;

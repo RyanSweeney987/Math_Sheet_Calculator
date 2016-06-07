@@ -2,5 +2,27 @@
 <android.support.v4.view.ViewPager
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#730d0d">
+
+    <com.ryanairth.mathsheetcalculator.GUI.Menu
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+    </com.ryanairth.mathsheetcalculator.GUI.Menu>
+
+    <com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@id/calculator_number_pad">
+    </com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad>
+
+    <com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+    </com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad>
 </android.support.v4.view.ViewPager>

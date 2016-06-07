@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.ryanairth.mathsheetcalculator.Exceptions.InvalidMathOperatorException;
 import com.ryanairth.mathsheetcalculator.GUI.CalculatorPreview;
+import com.ryanairth.mathsheetcalculator.GUI.MathPreview;
 import com.ryanairth.mathsheetcalculator.Math.Block;
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
@@ -19,9 +20,11 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  */
 public class PreviewInputProcessor implements PreviewUpdateListener {
     // TODO - move methods from calculator preview to here REFORMAT!
+    // FIXME - adding "-,+,+" glitches out, not sure why
     final String DASH_SEPARATOR = "------------------------------------------------------";
+    final String HASH_SEPARATOR = "######################################################";
 
-    private CalculatorPreview preview;
+    private MathPreview preview;
     /*
         Block manager that manages all of the numbers and symbols used for the maths
      */
@@ -71,7 +74,16 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
      */
     @Override
     public void updatePreview(char value) {
-        currentText = preview.getPreviewTextMain().getText().toString();
+        // Note: Processing the minus must always become before symbols, symbols are the last stage
+        //          this is because the minus symbol is unique in that it both serves as subtraction
+        //          and an indicator that a number is negative. (below 0, -0 not included)
+        //       It may also be best to keep both decimal and symbol processing at the end
+        //          and have any more specific bit of processing before hand.
+        //       Of course one could one could process each and every symbol manually however, most
+        //          operate by the same formatting rules so it's not completely necessary.
+
+
+        currentText = preview.getPrimary().getText().toString();
         lastChar = currentText.charAt(currentText.length() - 1);
 
         // In order to avoid a null pointer exception, we can only do this when there are two or
@@ -93,6 +105,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         // an empty string
         if(currentText.equals("0")) {
             currentText = "";
+            lastChar = '\u0000';
 
             switch (value) {
                 case '-':
@@ -149,7 +162,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         double sum = 0.0;
         // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
         try {
-            sum = manager.getBlockEvaluator().calculateTotal();
+            sum = manager.getCurrentSequence().getBlockEvaluator().calculateTotal();
         } catch (ClassCastException e) {
             Log.e(TAG, "Blocks: " + manager.toString());
 
@@ -174,7 +187,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         resetPreview();
         // Set current text and reset the preview text total to null
         setText(sumString);
-        preview.getPreviewTextTotal().setText("");
+        preview.getSecondary().setText("");
         // Update the current block
         currentBlockString = sumString;
 
@@ -255,7 +268,9 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         if(currentText.equals("") || currentText.equals("0")) {
             setText(currentText + MINUS);
 
-            updateCurrentBlockString(String.valueOf(MINUS), true, false);
+            updateCurrentBlockString(String.valueOf(MINUS), false, false);
+
+            return;
         }
         // If the last character is a number, we're specifically looking to take away from it
         if(Character.isDigit(lastChar)) {
@@ -277,27 +292,38 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
      * divide, percentage etc
      */
     private void processSymbol(final char symbol) {
-        // If the last character is a minus
-        if(Character.isDigit(lastChar)) {
-            /*if(blockManager.isEmpty()) {
-                updateCurrentBlockString(String.valueOf(currentText), true, false);
-            }*/
-
+        // TODO - TEMP/TEST
+        /*if(symbol == MathOperator.LEFT_BRACKET.getSymbol() || symbol == MathOperator.RIGHT_BRACKET.getSymbol()) {
             setText(currentText + symbol);
 
             updateCurrentBlockString(String.valueOf(symbol), true, false);
-        }
-        // If the last character isn't number
-        if(!Character.isDigit(lastChar)) {
-            // And if the last character isn't a minus with the second last character being a digit,
-            // carry on, otherwise, do nothing and expect a number to be entered as this will
-            // signify the start of a negative number
-            if(Character.isDigit(secondLastChar)) {
-                String subString = currentText.substring(0, currentText.length() - 1);
+        }*/
 
-                setText(subString + symbol);
+        // First check to make sure if we're not entering the same symbol, if we are, ignore it
+        if(symbol != lastChar) {
+            // If the last character is a minus
+            if(Character.isDigit(lastChar)) {
+                // TODO - Might need to remove
+                /*if(blockManager.isEmpty()) {
+                    updateCurrentBlockString(String.valueOf(currentText), true, false);
+                }*/
 
-                updateCurrentBlockString(String.valueOf(symbol), true, true);
+                setText(currentText + symbol);
+
+                updateCurrentBlockString(String.valueOf(symbol), true, false);
+            }
+            // If the last character isn't number
+            if(!Character.isDigit(lastChar)) {
+                // And if the last character isn't a minus with the second last character being a digit,
+                // carry on, otherwise, do nothing and expect a number to be entered as this will
+                // signify the start of a negative number
+                if(Character.isDigit(secondLastChar)) {
+                    String subString = currentText.substring(0, currentText.length() - 1);
+
+                    setText(subString + symbol);
+
+                    updateCurrentBlockString(String.valueOf(symbol), true, true);
+                }
             }
         }
     }
@@ -311,7 +337,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         Log.i(TAG, "Setting text to: " + updatedText);
 
         // Update text
-        preview.getPreviewTextMain().setText(updatedText);
+        preview.getPrimary().setText(updatedText);
         currentText = updatedText;
 
         // If there's more than one block
@@ -322,7 +348,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
 
             // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
             try {
-                sum = manager.getBlockEvaluator().calculateCurrentTotal();
+                sum = manager.getCurrentSequence().getBlockEvaluator().calculateCurrentTotal();
             } catch (Exception e) {
                 Log.e(TAG, manager.toString());
 
@@ -336,7 +362,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                 Log.e("AndroidRuntime: ", stackTrace.toString());
             }
 
-            preview.getPreviewTextTotal().setText(formatNumber(sum));
+            preview.getSecondary().setText(formatNumber(sum));
         }
 
         preview.scrollText(View.FOCUS_RIGHT);
@@ -351,6 +377,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
      *                        block manager
      */
     private void updateCurrentBlockString(String value, boolean finishedState, boolean replacePrevious) {
+        // TODO - add support for brackets and block sequences
         if(finishedState) {
             if(replacePrevious) {
                 // Remove the top element from the block manager
@@ -392,9 +419,13 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                 currentBlockString = value;
             }
 
-            Log.i(TAG, "Number of blocks: " + manager.getBlocks().size());
-            Log.i(TAG, "First on deque: " + manager.getFirstBlock());
-            Log.i(TAG, "Last on deque: " + manager.getFinalBlock());
+            if(!manager.isEmpty()) {
+                Log.i(TAG, "Number of blocks: " + manager.getBlocks().size());
+                Log.i(TAG, "First on deque: " + manager.getFirstBlock());
+                Log.i(TAG, "Last on deque: " + manager.getFinalBlock());
+            } else {
+                Log.i(TAG, "Block manager is empty");
+            }
             Log.e(TAG, DASH_SEPARATOR);
         } else {
             currentBlockString += value;
@@ -407,6 +438,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
     @Override
     public void resetPreview() {
         Log.i(TAG, "Resetting preview");
+        Log.e(TAG, HASH_SEPARATOR);
 
         // Reset the texts to display "0", the default state
         preview.resetPreview();
@@ -418,8 +450,8 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         manager.reset();
 
         // Reset last and second last char parameters to the null value (aka: "/0")
-        lastChar = 0;
-        secondLastChar = 0;
+        lastChar = '\u0000';
+        secondLastChar = '\u0000';
 
         isEvaluated = false;
     }

@@ -23,6 +23,8 @@
     <string name="numpad_del">DEL</string>
 
     // Scientific Numpad Strings
+    <string name="scientific_left_bracket">(</string>
+    <string name="scientific_right_bracket">)</string>
 
     // Titles
     <string name="standard_numbpad">Standard Numpad</string>

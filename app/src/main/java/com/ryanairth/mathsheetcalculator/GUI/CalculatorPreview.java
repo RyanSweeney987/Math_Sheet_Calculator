@@ -27,7 +27,7 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  * Created by Ryan Airth (Sweeney) on 16/01/2016.
  * Copyright information found in accompanying License.txt file.
  */
-public class CalculatorPreview extends RelativeLayout {
+public class CalculatorPreview extends RelativeLayout implements MathPreview{
     /*
         Text view for the numbers and symbols
      */
@@ -53,24 +53,26 @@ public class CalculatorPreview extends RelativeLayout {
     }
 
     /**
-     *  Getter method for the previewTextMain {@link TextView}
+     *  Getter method for the primary {@link TextView}
      *
      *  @see TextView
      *
      * @return previewTextMain, a TextView
      */
-    public TextView getPreviewTextMain() {
+    @Override
+    public TextView getPrimary() {
         return previewTextMain;
     }
 
     /**
-     *  Getter method for the previewTextTotal {@link TextView}
+     *  Getter method for the secondary math text {@link TextView}
      *
      *  @see TextView
      *
      * @return previewTextTotal, a TextView
      */
-    public TextView getPreviewTextTotal() {
+    @Override
+    public TextView getSecondary() {
         return previewTextTotal;
     }
 
@@ -123,6 +125,7 @@ public class CalculatorPreview extends RelativeLayout {
      *
      * @param direction direction to scroll the text in
      */
+    @Override
     public void scrollText(int direction) {
         switch (direction) {
             case FOCUS_LEFT:
@@ -139,6 +142,7 @@ public class CalculatorPreview extends RelativeLayout {
     /**
      * Resets the preview texts
      */
+    @Override
     public void resetPreview() {
         previewTextMain.setText("0");
         previewTextTotal.setText("0");

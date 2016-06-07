@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 
 import com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad;
@@ -37,43 +38,30 @@ public class Calculator extends AppCompatActivity {
 
         blockManager = new BlockManager();
 
-
-        //CalculatorPreview preview = (CalculatorPreview) findViewById(R.id.calculator_preview);
-        //if(preview == null) {
-        //    Log.i(TAG, "Preview is null!");
-       // }
-
         inputProcessor = new PreviewInputProcessor(blockManager, (CalculatorPreview) findViewById(R.id.calculator_preview));
 
         PadSlider padSlider = (PadSlider) findViewById(R.id.calculator_pad_slider);
-        if(padSlider == null) {
-            Log.e(TAG, "Padslider is null!");
-        }
 
-        Menu menu = new Menu(this, null);
-        menu.setOrientation(LinearLayout.VERTICAL);
-        if(menu == null) {
-            Log.e(TAG, "Menu is null!");
-        }
-
-        CalculatorNumpad numpad = new CalculatorNumpad(this, null);
-        numpad.setPreviewUpdateListener(inputProcessor);
-        if(numpad == null) {
-            Log.e(TAG, "Numpad is null!");
-        }
-
-        CalculatorScientificPad scientificPad = new CalculatorScientificPad(this, null);
-        //
-        if(scientificPad == null) {
-            Log.e(TAG, "Scientific is null!");
-        }
-
-        if(padSlider != null && numpad != null && scientificPad != null) {
-            padSlider.addPagerView(menu);
-            padSlider.addPagerView(numpad);
-            padSlider.addPagerView(scientificPad);
-
+        if(padSlider != null) {
             padSlider.setCurrentPage(1);
+
+            // TODO - implement menu functionality
+            Menu menu = (Menu) padSlider.findViewById(R.id.menu);
+            //Menu menu = new Menu(this, null);
+
+            CalculatorNumpad numpad = (CalculatorNumpad) padSlider.findViewById(R.id.calculator_number_pad);
+            //CalculatorNumpad numpad = new CalculatorNumpad(this, null);
+            numpad.setPreviewUpdateListener(inputProcessor);
+
+            CalculatorScientificPad scientificPad = (CalculatorScientificPad) padSlider.findViewById(R.id.calculator_scientific_pad);
+            //CalculatorScientificPad scientificPad = new CalculatorScientificPad(this, null);
+            scientificPad.setPreviewUpdateListener(inputProcessor);
+
+            //padSlider.addPagerView(menu);
+            //padSlider.addPagerView(numpad);
+            //padSlider.addPagerView(scientificPad);
+
+            //padSlider.setCurrentPage(1);
         }
     }
 

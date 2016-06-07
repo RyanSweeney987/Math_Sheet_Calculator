@@ -58,4 +58,6 @@
 
     // Scientific Numpad IDs
     // TODO - all of it in general
+    <item name="scientific_left_bracket" type="id"/>
+    <item name="scientific_right_bracket" type="id"/>
 </resources>
