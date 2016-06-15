@@ -17,7 +17,7 @@ public class BlockManager {
     /*
        The primary sequence that the manager uses
      */
-    private BlockSequence mainSequence;
+    private List<Block> blocks;
     /*
         The current sequence. In the event the user uses brackets
      */
@@ -36,10 +36,9 @@ public class BlockManager {
      * @see BlockSequence
      */
     public BlockManager() {
-        mainSequence = new BlockSequence();
-        currentSequence = mainSequence;
-
-        evaluator = new BlockEvaluator(mainSequence);
+        blocks = new ArrayList<>();
+        currentSequence = new BlockSequence(blocks);
+        evaluator = new BlockEvaluator(blocks);
     }
 
     public BlockSequence getCurrentSequence() {
@@ -55,7 +54,7 @@ public class BlockManager {
      * @return list containing all the blocks or an empty deque
      */
     public List<Block> getBlocks() {
-        return mainSequence.getBlocks();
+        return blocks;
     }
 
     /**
@@ -64,7 +63,7 @@ public class BlockManager {
      * @return last block on the deque
      */
     public Block getFinalBlock() {
-        return currentSequence.getBlocks().get(currentSequence.getBlocks().size() - 1);
+        return getBlocks().get(getBlocks().size() - 1);
     }
 
     /**
@@ -73,7 +72,7 @@ public class BlockManager {
      * @return first block on the deque
      */
     public Block getFirstBlock() {
-        return mainSequence.getBlocks().get(0);
+        return getBlocks().get(0);
     }
 
     /**
@@ -82,21 +81,21 @@ public class BlockManager {
      * @return whether or not the blocks array is empty
      */
     public boolean isEmpty() {
-        return currentSequence.getBlocks().isEmpty();
+        return getBlocks().isEmpty();
     }
 
     /**
      * Removes the top element from the array in the current sequence
      */
     public void pop() {
-        currentSequence.getBlocks().remove(currentSequence.getBlocks().size() - 1);
+        getBlocks().remove(getBlocks().size() - 1);
     }
 
     /**
      * Resets the array so that it is empty
      */
     public void reset() {
-        currentSequence.getBlocks().clear();
+        getBlocks().clear();
     }
 
     /**
@@ -109,7 +108,7 @@ public class BlockManager {
     public void createAndAddBlock(double number) {
         Log.i(TAG, "Number being added: " + number);
 
-        currentSequence.getBlocks().add(new NumberBlock(number));
+        getBlocks().add(new NumberBlock(number));
     }
 
     /**
@@ -123,19 +122,22 @@ public class BlockManager {
         Log.i(TAG, "Symbol being added: " + operator.name() + ":" + operator.getSymbol());
 
         // TODO - if user adds a bracket, start new sequence
-        /*if(operator == MathOperator.LEFT_BRACKET) {
+        if(operator == MathOperator.LEFT_BRACKET) {
             BlockSequence nextSequence = new BlockSequence();
 
             currentSequence.getBlocks().add(nextSequence);
 
             currentSequence = nextSequence;
+
+            Log.i(TAG, "Current sequence changed");
+            Log.i(TAG, currentSequence.toString());
         } else if(operator == MathOperator.RIGHT_BRACKET) {
 
         } else {
             currentSequence.getBlocks().add(new SymbolBlock(operator));
-        }*/
+        }
 
-        currentSequence.getBlocks().add(new SymbolBlock(operator));
+       // getBlocks().add(new SymbolBlock(operator));
     }
 
     @Override
@@ -143,13 +145,13 @@ public class BlockManager {
         StringBuilder builder = new StringBuilder();
         String lineSeparator = System.getProperty("line.separator");
 
-        builder.append("Number of blocks: " + currentSequence.getBlocks().size());
+        builder.append("Number of blocks: " + getBlocks().size());
         builder.append(lineSeparator);
 
         int numberCount = 0;
         int symbolCount = 0;
 
-        for(Block elem : currentSequence.getBlocks()) {
+        for(Block elem : getBlocks()) {
             if(elem instanceof NumberBlock) {
                 numberCount++;
             } else if(elem instanceof SymbolBlock) {
@@ -162,7 +164,10 @@ public class BlockManager {
         builder.append("Number of symbols: " + symbolCount);
         builder.append(lineSeparator);
 
-        for(Block elem : currentSequence.getBlocks()) {
+        builder.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        builder.append(lineSeparator);
+
+        for(Block elem : getBlocks()) {
             builder.append(elem.toString());
             builder.append(lineSeparator);
         }

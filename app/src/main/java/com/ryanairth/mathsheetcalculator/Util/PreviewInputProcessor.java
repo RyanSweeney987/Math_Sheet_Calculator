@@ -1,5 +1,10 @@
 package com.ryanairth.mathsheetcalculator.Util;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -9,6 +14,8 @@ import com.ryanairth.mathsheetcalculator.GUI.MathPreview;
 import com.ryanairth.mathsheetcalculator.Math.Block;
 import com.ryanairth.mathsheetcalculator.Math.BlockManager;
 import com.ryanairth.mathsheetcalculator.Math.MathOperator;
+import com.ryanairth.mathsheetcalculator.MathSheetApp;
+import com.ryanairth.mathsheetcalculator.R;
 
 import java.util.Locale;
 
@@ -19,8 +26,6 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  * Copyright information found in accompanying License.txt file.
  */
 public class PreviewInputProcessor implements PreviewUpdateListener {
-    // TODO - move methods from calculator preview to here REFORMAT!
-    // FIXME - adding "-,+,+" glitches out, not sure why
     final String DASH_SEPARATOR = "------------------------------------------------------";
     final String HASH_SEPARATOR = "######################################################";
 
@@ -77,10 +82,10 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         // Note: Processing the minus must always become before symbols, symbols are the last stage
         //          this is because the minus symbol is unique in that it both serves as subtraction
         //          and an indicator that a number is negative. (below 0, -0 not included)
-        //       It may also be best to keep both decimal and symbol processing at the end
+        //       It may also be best to keep both decimal and symbol processing at or near the end
         //          and have any more specific bit of processing before hand.
-        //       Of course one could one could process each and every symbol manually however, most
-        //          operate by the same formatting rules so it's not completely necessary.
+        //       Of course one could process each and every symbol manually however, most by the same
+        //          formatting rules so it's not completely necessary.
 
 
         currentText = preview.getPrimary().getText().toString();
@@ -118,6 +123,8 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                     if(Character.isDigit(value)) {
                         processDigit(value);
                     }
+
+                    break;
             }
         } else {
             switch (value) {
@@ -160,9 +167,24 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
 
         // Get sum from block manager
         double sum = 0.0;
-        // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
+        // Try catch was used for debugging, can take out safely (hopefully)
         try {
-            sum = manager.getCurrentSequence().getBlockEvaluator().calculateTotal();
+            sum = manager.getBlockEvaluator().calculateTotal();
+
+            // Format it so it's presentable
+            String sumString = formatNumber(sum);
+            // Reset the preview
+            resetPreview();
+            // Set current text and reset the preview text total to null
+            setText(sumString);
+            preview.getSecondary().setText("");
+            // Update the current block
+            currentBlockString = sumString;
+
+            // Set the isEvaluated boolean for logic that deals with further input after = has been pressed
+            isEvaluated = true;
+
+            preview.scrollText(View.FOCUS_LEFT);
         } catch (ClassCastException e) {
             Log.e(TAG, "Blocks: " + manager.toString());
 
@@ -177,24 +199,11 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
             Log.e(TAG, exception);
 
             // TODO - show popup explaining that an error has occurred - when internet is fixed
+            //DialogFragment exceptionDialog = new ExceptionDialogFragment();
+            //exceptionDialog.show(MathSheetApp.getAppContext(), "exception");
 
             resetPreview();
         }
-
-        // Format it so it's presentable
-        String sumString = formatNumber(sum);
-        // Reset the preview
-        resetPreview();
-        // Set current text and reset the preview text total to null
-        setText(sumString);
-        preview.getSecondary().setText("");
-        // Update the current block
-        currentBlockString = sumString;
-
-        // Set the isEvaluated boolean for logic that deals with further input after = has been pressed
-        isEvaluated = true;
-
-        preview.scrollText(View.FOCUS_LEFT);
     }
 
     /**
@@ -269,8 +278,6 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
             setText(currentText + MINUS);
 
             updateCurrentBlockString(String.valueOf(MINUS), false, false);
-
-            return;
         }
         // If the last character is a number, we're specifically looking to take away from it
         if(Character.isDigit(lastChar)) {
@@ -297,17 +304,16 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
             setText(currentText + symbol);
 
             updateCurrentBlockString(String.valueOf(symbol), true, false);
+
+            // TODO - refactor so no return statement
+            return;
         }*/
+        // TODO - END TEMP/TEXT
 
         // First check to make sure if we're not entering the same symbol, if we are, ignore it
         if(symbol != lastChar) {
             // If the last character is a minus
             if(Character.isDigit(lastChar)) {
-                // TODO - Might need to remove
-                /*if(blockManager.isEmpty()) {
-                    updateCurrentBlockString(String.valueOf(currentText), true, false);
-                }*/
-
                 setText(currentText + symbol);
 
                 updateCurrentBlockString(String.valueOf(symbol), true, false);
@@ -348,7 +354,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
 
             // Unnecessary try catch, was used for debugging, can take out safely (hopefully)
             try {
-                sum = manager.getCurrentSequence().getBlockEvaluator().calculateCurrentTotal();
+                sum = manager.getBlockEvaluator().calculateCurrentTotal();
             } catch (Exception e) {
                 Log.e(TAG, manager.toString());
 
@@ -377,11 +383,9 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
      *                        block manager
      */
     private void updateCurrentBlockString(String value, boolean finishedState, boolean replacePrevious) {
-        // TODO - add support for brackets and block sequences
         if(finishedState) {
             if(replacePrevious) {
-                // Remove the top element from the block manager
-                manager.pop();
+                currentBlockString = "";
 
                 try {
                     Double number = Double.parseDouble(currentBlockString);
@@ -407,6 +411,12 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                     Log.w(TAG, "Failed parsing a number, adding character!");
 
                     if(currentBlockString.length() > 0) {
+                        // TODO - TEST
+                        /*if(lastChar == '(') {
+                            manager.createAndAddBlock(MathOperator.MULTIPLY);
+                        }*/
+                        // TODO - END TEST
+
                         manager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
                     } else {
                         Log.e(TAG, "Failed to add character, currentBlockString is empty");
@@ -542,12 +552,32 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
      * @param number the number to be formatted
      * @return formatted string of the number
      */
-    public String formatNumber(double number) {
+    private String formatNumber(double number) {
         if(number == (long) number) {
             // Explicit locale to UK as default locale is apparently prone to bugs
             return String.format(Locale.UK, "%d", (long)number);
         } else {
             return String.format("%s", number);
+        }
+    }
+
+    public static class ExceptionDialogFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("An exception has occurred! Sorry!");
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Remove dialog
+                        }
+                    });
+
+            // Create the AlertDialog object and return it
+            return builder.create();
+
         }
     }
 }

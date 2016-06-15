@@ -36,47 +36,12 @@ public class MainActivity extends AppCompatActivity {
     // TODO - remake math grid to just render lines instead of images
     // TODO - separate each main part (multiscrollview, gridui and mathgrid) so they can be used in other ways
 
-    // TODO - set up actual calculator instead of selection wheel
-
     // TODO - make it so that the actual button dictates what happens to the text in the preview
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*setContentView(R.layout.calculator_layout);
-
-        blockManager = new BlockManager();
-
-
-        CalculatorPreview preview = (CalculatorPreview) findViewById(R.id.calculator_preview);
-        if(preview == null) {
-            Log.i(TAG, "Preview is null!");
-        }
-
-        inputProcessor = new PreviewInputProcessor(blockManager, preview);
-
-        PadSlider padSlider = (PadSlider) findViewById(R.id.calculator_pad_slider);
-        if(padSlider == null) {
-            Log.e(TAG, "Padslider is null!");
-        }
-
-        CalculatorNumpad numpad = new CalculatorNumpad(this, null, preview);
-        numpad.setPreviewUpdateListener(inputProcessor);
-        if(numpad == null) {
-            Log.e(TAG, "Numpad is null!");
-        }
-
-        CalculatorScientificPad scientificPad = new CalculatorScientificPad(this, null);
-        //
-        if(scientificPad == null) {
-            Log.e(TAG, "Scientific is null!");
-        }
-
-        if(padSlider != null && numpad != null && scientificPad != null) {
-            padSlider.addPagerView(numpad);
-            padSlider.addPagerView(scientificPad);
-        }*/
     }
 
     @Override

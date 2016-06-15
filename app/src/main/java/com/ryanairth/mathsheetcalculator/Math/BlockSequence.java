@@ -18,47 +18,40 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
  * Created by Ryan Airth (Sweeney) on 04/06/2016.
  * Copyright information found in accompanying License.txt file.
  */
-public class BlockSequence implements Block<Double> {
-    // TODO - implement recursion for evaluation and addition
+public class BlockSequence extends BlockEvaluator implements Block<Double> {
     /*
-        List containing all the number/symbol blocks as well as other block sequences
+        Value of this sequence
      */
-    private List<Block> blocks;
-    /*
-        Evaluator object used to calculate the total of this sequence
-     */
-    private BlockEvaluator evaluator;
+    private Double value;
 
     public BlockSequence() {
-        blocks = new ArrayList<>();
-        evaluator = new BlockEvaluator(this);
+        this(new ArrayList<Block>());
     }
 
-    public List<Block> getBlocks() {
-        return blocks;
-    }
-
-    /**
-     * Get the {@link BlockEvaluator} used to calculate the final value of all the blocks entered by the user
-     *
-     * @see BlockEvaluator
-     *
-     * @return block evaluator object
-     */
-    public BlockEvaluator getBlockEvaluator() {
-        return evaluator;
+    public BlockSequence(List<Block> blocks) {
+        super(blocks);
     }
 
     @Override
     public Double getValue() {
         try {
-            return evaluator.calculateTotal();
+            if(value != null) {
+                return value;
+            } else {
+                value = calculateCurrentTotal();
+                return value;
+            }
         } catch (InvalidMathOperatorException e) {
             String exceptionString = Log.getStackTraceString(e);
 
             Log.e(TAG, exceptionString);
 
-            return -1.0;
+            return -10000000000.0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Type: BlockSequence, Value: " + String.valueOf(getValue());
     }
 }

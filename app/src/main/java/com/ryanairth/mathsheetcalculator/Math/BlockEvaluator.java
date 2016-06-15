@@ -18,9 +18,7 @@ public class BlockEvaluator {
     /*
         List of blocks used for the calculations
      */
-    List<Block> blocks;
-
-    private BlockSequence start;
+    private List<Block> blocks;
 
     /**
      * Block calculator, object designed to specifically calculate the total of all the blocks entered
@@ -32,9 +30,8 @@ public class BlockEvaluator {
         this.blocks = blocks;
     }
 
-    public BlockEvaluator(BlockSequence start) {
-        this.start = start;
-        this.blocks = start.getBlocks();
+    public List<Block> getBlocks() {
+        return blocks;
     }
 
     /**
@@ -42,6 +39,7 @@ public class BlockEvaluator {
      * have been made and looking for the final value
      *
      * @return number representing the sum of the maths equation
+     * @throws InvalidMathOperatorException exception thrown when an unexpected operator is found, cause would be unimplemented operators
      */
     public double calculateTotal() throws InvalidMathOperatorException {
         // If there aren't any elements in the blocks array, return zero
@@ -50,9 +48,15 @@ public class BlockEvaluator {
             return 0.0;
         }
 
-        return evaluate();
+        return evaluate(new BlockSequence(blocks));
     }
 
+    /**
+     * Calculate and return the final evaluation of the maths equation entered by the user thus far
+     *
+     * @return number representing the sum of the maths equation
+     * @throws InvalidMathOperatorException exception thrown when an unexpected operator is found, cause would be unimplemented operators
+     */
     public double calculateCurrentTotal() throws InvalidMathOperatorException {
         // If there aren't any elements in the blocks array, return zero
         if(blocks.size() <= 0) {
@@ -69,10 +73,10 @@ public class BlockEvaluator {
             return ((NumberBlock)blocks.get(0)).getValue();
         }
 
-        return evaluate();
+        return evaluate(new BlockSequence(blocks));
     }
 
-    private double evaluate() throws InvalidMathOperatorException {
+    /*protected double evaluate() throws InvalidMathOperatorException {
         // Get the first number to start off
         double currentValue = 0.0;
 
@@ -109,10 +113,8 @@ public class BlockEvaluator {
                     currentValue = (currentValue / nextValue) * 100;
                     break;
                 case NONE:
-                    /*
-                        This should never occur, if it does, there's an issue when adding the operator
-                        to the block manager in any class that has this as an object
-                     */
+                    // This should never occur, if it does, there's an issue when adding the operator
+                    // to the block manager in any class that has this as an object
                 default:
                     // Might not actually need to throw anything here, though, just hoping it would be useful
                     // perhaps it's an incorrect usage, not too used to throwing errors and exceptions
@@ -122,9 +124,16 @@ public class BlockEvaluator {
         }
 
         return currentValue;
-    }
+    }*/
 
-    private double evaluate(BlockSequence start) throws InvalidMathOperatorException {
+    /**
+     *
+     *
+     * @param start
+     * @return
+     * @throws InvalidMathOperatorException
+     */
+    protected double evaluate(BlockSequence start) throws InvalidMathOperatorException {
         // Get the first number to start off
         double currentValue = 0.0;
 
@@ -176,6 +185,9 @@ public class BlockEvaluator {
                 case PERCENTAGE:
                     currentValue = (currentValue / nextValue) * 100;
                     break;
+                /*case LEFT_BRACKET:
+                    currentValue *= nextValue;
+                    break;*/
                 case NONE:
                     /*
                         This should never occur, if it does, there's an issue when adding the operator

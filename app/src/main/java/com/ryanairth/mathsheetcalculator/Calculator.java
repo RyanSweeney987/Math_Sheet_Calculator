@@ -20,10 +20,11 @@ import com.ryanairth.mathsheetcalculator.Util.PreviewInputProcessor;
  * Copyright information found in accompanying License.txt file.
  */
 public class Calculator extends AppCompatActivity {
+    // TODO - remake some components to use fragments
+
     public final static String TAG = "Ryan: ";
 
     private LinearLayout multiScrollView;
-    private Intent selectionWheel;
     private int requestCode = 0;
     private int intentCount = 0;
 
