@@ -17,6 +17,8 @@ import com.ryanairth.mathsheetcalculator.Math.MathOperator;
 import com.ryanairth.mathsheetcalculator.MathSheetApp;
 import com.ryanairth.mathsheetcalculator.R;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
@@ -310,6 +312,10 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
         }*/
         // TODO - END TEMP/TEXT
 
+        // TODO - if right bracket is added straight after a number, add a multiply.
+        // TODO - Do the same if number is added directly after right bracket, otherwise, use don't add a multiply.
+
+
         // First check to make sure if we're not entering the same symbol, if we are, ignore it
         if(symbol != lastChar) {
             // If the last character is a minus
@@ -412,9 +418,9 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
 
                     if(currentBlockString.length() > 0) {
                         // TODO - TEST
-                        /*if(lastChar == '(') {
+                        if(lastChar == '(') {
                             manager.createAndAddBlock(MathOperator.MULTIPLY);
-                        }*/
+                        }
                         // TODO - END TEST
 
                         manager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
@@ -557,27 +563,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
             // Explicit locale to UK as default locale is apparently prone to bugs
             return String.format(Locale.UK, "%d", (long)number);
         } else {
-            return String.format("%s", number);
-        }
-    }
-
-    public static class ExceptionDialogFragment extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("An exception has occurred! Sorry!");
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Remove dialog
-                        }
-                    });
-
-            // Create the AlertDialog object and return it
-            return builder.create();
-
+            return String.format(Locale.UK, "%s", number);
         }
     }
 }

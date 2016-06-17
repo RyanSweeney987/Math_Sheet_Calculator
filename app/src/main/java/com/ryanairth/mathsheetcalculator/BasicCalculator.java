@@ -19,8 +19,9 @@ import com.ryanairth.mathsheetcalculator.Util.PreviewInputProcessor;
  * Created by Ryan Airth (Sweeney) on 20/01/2016.
  * Copyright information found in accompanying License.txt file.
  */
-public class Calculator extends AppCompatActivity {
+public class BasicCalculator extends AppCompatActivity {
     // TODO - remake some components to use fragments
+    // TODO - memory functions (M+, M-, M*, M/, MSELECT, MCLEAR, MCOPY
 
     public final static String TAG = "Ryan: ";
 

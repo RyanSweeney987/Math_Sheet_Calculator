@@ -12,37 +12,25 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.*;
  * Copyright information found in accompanying License.txt file.
  */
 public class BlockManager {
-    // TODO - implement recursion for addition and evaluation
-    // TODO - left bracket starts new sequence, right bracket indicates end of sequence
     /*
        The primary sequence that the manager uses
      */
     private List<Block> blocks;
-    /*
-        The current sequence. In the event the user uses brackets
-     */
-    private BlockSequence currentSequence;
     /*
         Evaluator object used to calculate the total of all sequences
      */
     private BlockEvaluator evaluator;
 
     /**
-     * BlockManager manages the numbers and symbols entered by the user in modular blocks, {@link BlockManager},
-     * {@link SymbolBlock} or {@link BlockSequence}.
+     * BlockManager manages the numbers and symbols entered by the user in modular blocks, {@link BlockManager}
+     * or {@link SymbolBlock}.
      *
      * @see NumberBlock
      * @see SymbolBlock
-     * @see BlockSequence
      */
     public BlockManager() {
         blocks = new ArrayList<>();
-        currentSequence = new BlockSequence(blocks);
         evaluator = new BlockEvaluator(blocks);
-    }
-
-    public BlockSequence getCurrentSequence() {
-        return currentSequence;
     }
 
     public BlockEvaluator getBlockEvaluator() {
@@ -121,23 +109,7 @@ public class BlockManager {
     public void createAndAddBlock(MathOperator operator) {
         Log.i(TAG, "Symbol being added: " + operator.name() + ":" + operator.getSymbol());
 
-        // TODO - if user adds a bracket, start new sequence
-        if(operator == MathOperator.LEFT_BRACKET) {
-            BlockSequence nextSequence = new BlockSequence();
-
-            currentSequence.getBlocks().add(nextSequence);
-
-            currentSequence = nextSequence;
-
-            Log.i(TAG, "Current sequence changed");
-            Log.i(TAG, currentSequence.toString());
-        } else if(operator == MathOperator.RIGHT_BRACKET) {
-
-        } else {
-            currentSequence.getBlocks().add(new SymbolBlock(operator));
-        }
-
-       // getBlocks().add(new SymbolBlock(operator));
+        getBlocks().add(new SymbolBlock(operator));
     }
 
     @Override

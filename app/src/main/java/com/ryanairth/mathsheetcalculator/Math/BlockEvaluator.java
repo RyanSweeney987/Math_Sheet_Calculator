@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.ryanairth.mathsheetcalculator.Exceptions.InvalidMathOperatorException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ryanairth.mathsheetcalculator.MainActivity.TAG;
@@ -48,7 +49,7 @@ public class BlockEvaluator {
             return 0.0;
         }
 
-        return evaluate(new BlockSequence(blocks));
+        return evaluate(this.blocks);
     }
 
     /**
@@ -73,132 +74,100 @@ public class BlockEvaluator {
             return ((NumberBlock)blocks.get(0)).getValue();
         }
 
-        return evaluate(new BlockSequence(blocks));
+        return evaluate(this.blocks);
     }
 
-    /*protected double evaluate() throws InvalidMathOperatorException {
+    /**
+     * Evaluates the current block array
+     *
+     * @param blockArray arrayContaining the blocks
+     * @return the evaluation of the sum entered by the user
+     * @throws InvalidMathOperatorException
+     */
+    private double evaluate(List<Block> blockArray) throws InvalidMathOperatorException {
+        // TODO - support recursion within the method itself
         // Get the first number to start off
         double currentValue = 0.0;
 
         // We know there's at least a single element, so we know that blocks.get(0) will not fail
-        currentValue = ((NumberBlock)blocks.get(0)).getValue();
+        currentValue = ((NumberBlock)blockArray.get(0)).getValue();
 
         // Otherwise we're fine to carry on with our usual operations
-        for(int i = 1; i < blocks.size(); i++) {
+        for(int i = 1; i < blockArray.size(); i++) {
             // Test to see if final block is a symbol, if so, break, no need to continue
-            if(i == blocks.size() - 1 && blocks.get(i) instanceof SymbolBlock) {
+            if(i == blockArray.size() - 1 && blockArray.get(i) instanceof SymbolBlock) {
                 break;
             }
 
             // Every time we loop we want the next thing to get to be the operator used
-            MathOperator operator = ((SymbolBlock)blocks.get(i++)).getValue();
+            MathOperator operator = ((SymbolBlock)blockArray.get(i++)).getValue();
             // After we get the operator to use, we get the number that will be used to modify the current value
-            double nextValue = ((NumberBlock)blocks.get(i)).getValue();
 
-            // Then we operate on the previous number
-            switch (operator) {
-                case PLUS:
-                    currentValue += nextValue;
-                    break;
-                case MINUS:
-                    currentValue -= nextValue;
-                    break;
-                case MULTIPLY:
-                    currentValue *= nextValue;
-                    break;
-                case DIVIDE:
-                    currentValue /= nextValue;
-                    break;
-                case PERCENTAGE:
-                    currentValue = (currentValue / nextValue) * 100;
-                    break;
-                case NONE:
-                    // This should never occur, if it does, there's an issue when adding the operator
-                    // to the block manager in any class that has this as an object
-                default:
-                    // Might not actually need to throw anything here, though, just hoping it would be useful
-                    // perhaps it's an incorrect usage, not too used to throwing errors and exceptions
-                    throw new InvalidMathOperatorException("Error calculating total, math operator is: "
-                            + MathOperator.NONE);
-            }
+            // TODO - find if right bracket exists, if so, add everything within bracket to new
+            // TODO - array, do evaluation on new array, set next value to bracket
+            // TODO - If no opposing right bracket exists, end here, don't calculate any further until
+            // TODO - right bracket is added
+
+
+            double nextValue = ((NumberBlock)blockArray.get(i)).getValue();
+
+            currentValue = performMathOperation(currentValue, nextValue, operator);
         }
 
         return currentValue;
-    }*/
+    }
 
-    /**
-     *
-     *
-     * @param start
-     * @return
-     * @throws InvalidMathOperatorException
-     */
-    protected double evaluate(BlockSequence start) throws InvalidMathOperatorException {
-        // Get the first number to start off
-        double currentValue = 0.0;
+    private boolean hasBracketPairs(List<Block> blockList) {
+        int leftBracketCount = 0;
+        int rightBracketCount = 0;
 
-        // If the first element is a block sequence containing other blocks, get value from that
-        if(start.getBlocks().get(0) instanceof BlockSequence) {
-            Log.i(TAG, "Entering block sequence");
+        for(int i = 0; i < blockList.size(); i++) {
+            if(blockList.get(i).getValue() instanceof SymbolBlock) {
+                if(blockList.get(i).getValue() == MathOperator.LEFT_BRACKET) {
+                    leftBracketCount++;
+                } else if(blockList.get(i).getValue() == MathOperator.RIGHT_BRACKET) {
+                    rightBracketCount++;
+                }
+            }
 
-            currentValue = start.getValue();
-        } else {
-            // We know there's at least a single element, so we know that blocks.get(0) will not fail
-            currentValue = ((NumberBlock)start.getBlocks().get(0)).getValue();
         }
 
-        // Otherwise we're fine to carry on with our usual operations
-        for(int i = 1; i < start.getBlocks().size(); i++) {
-            // Test to see if final block is a symbol, if so, break, no need to continue
-            if(i == start.getBlocks().size() - 1 && start.getBlocks().get(i) instanceof SymbolBlock) {
+        if(leftBracketCount % rightBracketCount == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private double performMathOperation(double currentValue, double nextValue, MathOperator operator)
+
+
+            throws InvalidMathOperatorException {
+        switch (operator) {
+            case PLUS:
+                currentValue += nextValue;
                 break;
-            }
-
-            // Every time we loop we want the next thing to get to be the operator used
-            MathOperator operator = ((SymbolBlock)start.getBlocks().get(i++)).getValue();
-            // After we get the operator to use, we get the number that will be used to modify the current value
-            double nextValue;
-
-            if(start.getBlocks().get(i) instanceof BlockSequence) {
-                Log.i(TAG, "Entering block sequence");
-
-                nextValue = (Double)start.getBlocks().get(i).getValue();
-            } else {
-                nextValue = ((NumberBlock)start.getBlocks().get(i)).getValue();
-            }
-
-
-            // Then we operate on the previous number
-            switch (operator) {
-                case PLUS:
-                    currentValue += nextValue;
-                    break;
-                case MINUS:
-                    currentValue -= nextValue;
-                    break;
-                case MULTIPLY:
-                    currentValue *= nextValue;
-                    break;
-                case DIVIDE:
-                    currentValue /= nextValue;
-                    break;
-                case PERCENTAGE:
-                    currentValue = (currentValue / nextValue) * 100;
-                    break;
-                /*case LEFT_BRACKET:
-                    currentValue *= nextValue;
-                    break;*/
-                case NONE:
-                    /*
-                        This should never occur, if it does, there's an issue when adding the operator
-                        to the block manager in any class that has this as an object
-                     */
-                default:
-                    // Might not actually need to throw anything here, though, just hoping it would be useful
-                    // perhaps it's an incorrect usage, not too used to throwing errors and exceptions
-                    throw new InvalidMathOperatorException("Error calculating total, math operator is: "
-                            + MathOperator.NONE);
-            }
+            case MINUS:
+                currentValue -= nextValue;
+                break;
+            case MULTIPLY:
+                currentValue *= nextValue;
+                break;
+            case DIVIDE:
+                currentValue /= nextValue;
+                break;
+            case PERCENTAGE:
+                // FIXME - order is broken! Should be 100%90 = 90 (90% of 100)
+                currentValue = (currentValue / 100) * nextValue;
+                break;
+            case NONE:
+                // This should never occur, if it does, there's an issue when adding the operator
+                // to the block manager in any class that has this as an object
+            default:
+                // Might not actually need to throw anything here, though, just hoping it would be useful
+                // perhaps it's an incorrect usage, not too used to throwing errors and exceptions
+                throw new InvalidMathOperatorException("Error calculating total, math operator is: "
+                        + MathOperator.NONE);
         }
 
         return currentValue;

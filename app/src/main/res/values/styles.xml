@@ -2,6 +2,12 @@
     <!-- Base application theme. -->
     <style name="Main" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/others_grey_pressed</item>
+        <item name="colorPrimaryDark">@color/others_grey_normal</item>
+        <item name="android:textColorSecondary">@color/material_grey_900</item>
+        <item name="android:textColorPrimary">@color/material_grey_900</item>
+        <item name="colorAccent">@color/numbers_blue_normal</item>
+        <item name="android:colorForeground">@color/default_color</item>
     </style>
     <style name="Main.NoActionBar">
         <item name="windowActionBar">false</item>
