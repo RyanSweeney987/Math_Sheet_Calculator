@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="default_color" type="color">#ffececec</item>
+    <!--<item name="default_color" type="color">#ffececec</item>
 
     <item name="others_grey_normal" type="color">#666666</item>
     <item name="others_grey_pressed" type="color">#919191</item>
-    <item name="numbers_blue_normal" type="color">#44a7ff</item>
+    <item name="numbers_blue_normal" type="color">#44a7ff</item>-->
     <item name="numbers_blue_pressed" type="color">#77bcfa</item>
-    <item name="special_red_normal" type="color">#ff5406</item>
+    <!--<item name="special_red_normal" type="color">#ff5406</item>-->
     <item name="special_red_pressed" type="color">#ff7c40</item>
 
-    <item name="text_color" type="color">#FFECECEC</item>
+    <!--<item name="text_color" type="color">#FFECECEC</item>-->
+
+    <item name="menu_background_normal" type="color">#616161</item>
+    <item name="menu_background_pressed" type="color">#757575</item>
+
+    <color name="default_color">#ececec</color>
+
+    <color name="others_grey_normal">#666666</color>
+    <color name="others_grey_pressed">#919191</color>
+    <color name="numbers_blue_normal">#42a5f5</color>
+    <color name="special_red_normal">#ff5406</color>
+
+    <color name="text_color">#ececec</color>
 </resources>

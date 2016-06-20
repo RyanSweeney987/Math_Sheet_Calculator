@@ -19,6 +19,13 @@
     <item name="calculator_scientific_pad" type="id"/>
     <item name="calculator_pad_slider" type="id"/>
 
+    // Menu IDs
+    <item name="menu" type="id"/>
+    <item name="menu_save" type="id"/>
+    <item name="menu_load" type="id"/>
+    <item name="menu_to_grid" type="id"/>
+    <item name="menu_help" type="id"/>
+
     // Preview IDs
     <item name="preview_main_text" type="id"/>
     <item name="preview_total_text" type="id"/>
@@ -51,4 +58,6 @@
 
     // Scientific Numpad IDs
     // TODO - all of it in general
+    <item name="scientific_left_bracket" type="id"/>
+    <item name="scientific_right_bracket" type="id"/>
 </resources>

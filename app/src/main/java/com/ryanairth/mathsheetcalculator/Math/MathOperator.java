@@ -10,6 +10,8 @@ public enum MathOperator {
     MULTIPLY('×'),
     DIVIDE('÷'),
     PERCENTAGE('%'),
+    LEFT_BRACKET('('),
+    RIGHT_BRACKET(')'),
     NONE('\u0000');
 
     private char symbol;
@@ -23,14 +25,14 @@ public enum MathOperator {
     }
 
     public static MathOperator getEnumFromCharacter(char symbol) {
-        MathOperator operator = null;
-
         switch (symbol) {
             case '+': return PLUS;
             case '-': return MINUS;
             case '×': return MULTIPLY;
             case '÷': return DIVIDE;
             case '%': return PERCENTAGE;
+            case '(': return LEFT_BRACKET;
+            case ')': return RIGHT_BRACKET;
             default: return NONE;
         }
     }

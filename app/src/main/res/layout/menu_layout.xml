@@ -9,35 +9,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:id="@+id/button"
-        android:clickable="false"
+        android:id="@id/menu_save"
         android:textSize="50dp"
-        android:minWidth="250dp" />
+        android:minWidth="250dp"
+        android:background="@drawable/menu_background"
+        android:textColor="@color/text_color" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Load"
-        android:id="@+id/button2"
-        android:clickable="false"
+        android:id="@id/menu_load"
         android:textSize="50dp"
-        android:minWidth="250dp" />
+        android:minWidth="250dp"
+        android:background="@drawable/menu_background"
+        android:textColor="@color/text_color" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="To Grid"
-        android:id="@+id/button3"
-        android:clickable="false"
+        android:id="@id/menu_to_grid"
         android:textSize="50dp"
-        android:minWidth="250dp" />
+        android:minWidth="250dp"
+        android:background="@drawable/menu_background"
+        android:textColor="@color/text_color" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rate"
-        android:id="@+id/button4"
-        android:clickable="false"
+        android:text="Help"
+        android:id="@id/menu_help"
         android:textSize="50dp"
-        android:minWidth="250dp" />
+        android:minWidth="250dp"
+        android:background="@drawable/menu_background"
+        android:textColor="@color/text_color" />
 </LinearLayout>

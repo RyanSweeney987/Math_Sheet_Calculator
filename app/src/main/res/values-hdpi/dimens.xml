@@ -12,11 +12,16 @@
     // Calculator
     <dimen name="calc_single_width_dp">80dp</dimen>
     <dimen name="calc_single_height_dp">80dp</dimen>
-    <dimen name="calc_double_width_dp">180dp</dimen>
-    <dimen name="calc_double_height_dp">154dp</dimen>
-    <dimen name="calc_text_size">32sp</dimen>
-    <dimen name="calc_margin">30dp</dimen>
+    <dimen name="calc_double_width_dp">160dp</dimen>
+    <dimen name="calc_double_height_dp">160dp</dimen>
+    <dimen name="calc_text_size_sp">32sp</dimen>
+    <dimen name="calc_margin_dp">30dp</dimen>
     // Calc preview
-    <dimen name="calc_prev_width_dp">480dp</dimen>
-    <dimen name="calc_prev_height_dp">113dp</dimen>
+    <dimen name="prev_text_width_dp">480dp</dimen>
+    <dimen name="prev_text_height_dp">142dp</dimen>
+    <dimen name="prev_text_icons_height_dp">20dp</dimen>
+    <dimen name="prev_text_main_size_sp">50sp</dimen>
+    <dimen name="prev_text_total_size_sp">40sp</dimen>
+    <dimen name="prev_text_margin_main_dp">5dp</dimen>
+    <dimen name="prev_text_margin_total_dp">10dp</dimen>
 </resources>

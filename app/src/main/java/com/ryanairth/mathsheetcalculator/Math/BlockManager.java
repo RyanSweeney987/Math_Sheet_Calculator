@@ -13,89 +13,81 @@ import static com.ryanairth.mathsheetcalculator.MainActivity.*;
  */
 public class BlockManager {
     /*
-        List containing "blocks", each block represents a symbol or a number
+       The primary sequence that the manager uses
      */
     private List<Block> blocks;
     /*
-        Object specifically used to evaluate the blocks
+        Evaluator object used to calculate the total of all sequences
      */
-    private BlockEvaluator blockEvaluator;
+    private BlockEvaluator evaluator;
 
     /**
      * BlockManager manages the numbers and symbols entered by the user in modular blocks, {@link BlockManager}
-     * and {@link SymbolBlock}. These are stored in an ArrayList
+     * or {@link SymbolBlock}.
      *
      * @see NumberBlock
      * @see SymbolBlock
      */
     public BlockManager() {
         blocks = new ArrayList<>();
-        blockEvaluator = new BlockEvaluator(blocks);
+        evaluator = new BlockEvaluator(blocks);
     }
 
+    public BlockEvaluator getBlockEvaluator() {
+        return evaluator;
+    }
     /**
-     * Get the list of blocks
+     * Get the list of blocks from current sequence
      *
-     * @return deque containing all the blocks or an empty deque
+     * @return list containing all the blocks or an empty deque
      */
     public List<Block> getBlocks() {
         return blocks;
     }
 
     /**
-     * Returns the last block from the list
+     * Returns the last block from the current sequence
      *
      * @return last block on the deque
      */
     public Block getFinalBlock() {
-        return blocks.get(blocks.size() - 1);
+        return getBlocks().get(getBlocks().size() - 1);
     }
 
     /**
-     * Returns the first block from the list
+     * Returns the first block from the current sequence
      *
      * @return first block on the deque
      */
     public Block getFirstBlock() {
-        return blocks.get(0);
+        return getBlocks().get(0);
     }
 
     /**
-     * Composition method that calls the blocks' array.isEmpty() method
+     * Composition method that calls the current sequences blocks' array.isEmpty() method
      *
      * @return whether or not the blocks array is empty
      */
     public boolean isEmpty() {
-        return blocks.isEmpty();
+        return getBlocks().isEmpty();
     }
 
     /**
-     * Removes the top element from the array
+     * Removes the top element from the array in the current sequence
      */
     public void pop() {
-        blocks.remove(blocks.size() - 1);
-    }
-
-    /**
-     * Get the {@link BlockEvaluator} used to calculate the final value of all the blocks entered by the user
-     *
-     * @see BlockEvaluator
-     *
-     * @return block evaluator object
-     */
-    public BlockEvaluator getBlockEvaluator() {
-        return blockEvaluator;
+        getBlocks().remove(getBlocks().size() - 1);
     }
 
     /**
      * Resets the array so that it is empty
      */
     public void reset() {
-        blocks.clear();
+        getBlocks().clear();
     }
 
     /**
-     * Creates a new NumberBlock and adds it to the array
+     * Creates a new NumberBlock and adds it to the current sequence
      *
      * @param number the value to be used in the new block
      *
@@ -104,15 +96,11 @@ public class BlockManager {
     public void createAndAddBlock(double number) {
         Log.i(TAG, "Number being added: " + number);
 
-        if(blocks.size() > 0) {
-            blocks.add(new NumberBlock(number, getFinalBlock()));
-        } else {
-            blocks.add(new NumberBlock(number));
-        }
+        getBlocks().add(new NumberBlock(number));
     }
 
     /**
-     * Creates a new SymbolBlock and adds it to the array
+     * Creates a new SymbolBlock and adds it to the current sequence
      *
      * @param operator the symbol to be used in the new block
      *
@@ -121,11 +109,7 @@ public class BlockManager {
     public void createAndAddBlock(MathOperator operator) {
         Log.i(TAG, "Symbol being added: " + operator.name() + ":" + operator.getSymbol());
 
-        if (blocks.size() > 0) {
-            blocks.add(new SymbolBlock(operator, getFinalBlock()));
-        } else {
-            blocks.add(new SymbolBlock(operator));
-        }
+        getBlocks().add(new SymbolBlock(operator));
     }
 
     @Override
@@ -133,13 +117,13 @@ public class BlockManager {
         StringBuilder builder = new StringBuilder();
         String lineSeparator = System.getProperty("line.separator");
 
-        builder.append("Number of blocks: " + blocks.size());
+        builder.append("Number of blocks: " + getBlocks().size());
         builder.append(lineSeparator);
 
         int numberCount = 0;
         int symbolCount = 0;
 
-        for(Block elem : blocks) {
+        for(Block elem : getBlocks()) {
             if(elem instanceof NumberBlock) {
                 numberCount++;
             } else if(elem instanceof SymbolBlock) {
@@ -152,7 +136,10 @@ public class BlockManager {
         builder.append("Number of symbols: " + symbolCount);
         builder.append(lineSeparator);
 
-        for(Block elem : blocks) {
+        builder.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        builder.append(lineSeparator);
+
+        for(Block elem : getBlocks()) {
             builder.append(elem.toString());
             builder.append(lineSeparator);
         }

@@ -9,6 +9,8 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
 import com.ryanairth.mathsheetcalculator.R;
+import com.ryanairth.mathsheetcalculator.Util.PreviewUpdateDispatcher;
+import com.ryanairth.mathsheetcalculator.Util.PreviewUpdateListener;
 
 import java.util.List;
 
@@ -16,19 +18,18 @@ import java.util.List;
  * Created by Ryan Airth (Sweeney) on 27/02/2016.
  * Copyright information found in accompanying License.txt file.
  */
+<<<<<<< HEAD
 public class CalculatorNumpad extends LinearLayout {
     // TODO - better link to xml file
 
+=======
+public class CalculatorNumpad extends LinearLayout implements PreviewUpdateDispatcher{
+>>>>>>> Calc_Preview
     /**
      * Grid layout to put the numbers and such in, for some reason this is really needed or odd gaps
      * appear between the buttons
      */
     private GridLayout gridLayout;
-    /**
-     * Button list, don't need it atm
-     */
-    // TODO find a use?
-    private List<Button> buttonList;
     /**
      * Buttons that are numbers
      */
@@ -38,17 +39,9 @@ public class CalculatorNumpad extends LinearLayout {
      */
     private Button equals, plus, minus, multiply, divide, decimal, ce, percentage, del, other2;
     /**
-     * The preview that receives the data from the number presses
+     * Receiver for all the preview update events
      */
-    private CalculatorPreview preview;
-
-    public CalculatorNumpad(Context context, AttributeSet attrs, CalculatorPreview preview) {
-        super(context, attrs);
-
-        this.preview = preview;
-
-        init(context);
-    }
+    private PreviewUpdateListener listener;
 
     public CalculatorNumpad(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -57,16 +50,15 @@ public class CalculatorNumpad extends LinearLayout {
     }
 
     /**
-     * Little helper method that sets the preview as well as got to seperate methods that set
-     * up all the buttons
+     * Set the {@link PreviewUpdateListener} that receives all the update events
      *
-     * @param preview the calculator preview object the data from the buttons will be sent to
+     * @see PreviewUpdateListener
+     *
+     * @param listener listener
      */
-    public void setCalculatorPreview(CalculatorPreview preview) {
-        this.preview = preview;
-
-        setUpNumberButtons();
-        setUpMathButtons();
+    @Override
+    public void setPreviewUpdateListener(PreviewUpdateListener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -104,10 +96,8 @@ public class CalculatorNumpad extends LinearLayout {
         ce = (Button) gridLayout.findViewById(R.id.numpad_ce);
         del = (Button) gridLayout.findViewById(R.id.numpad_del);
 
-        if(preview != null) {
-            setUpNumberButtons();
-            setUpMathButtons();
-        }
+        setUpNumberButtons();
+        setUpMathButtons();
     }
 
     /**
@@ -119,70 +109,70 @@ public class CalculatorNumpad extends LinearLayout {
         one.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_one).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_one).charAt(0));
             }
         });
 
         two.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_two).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_two).charAt(0));
             }
         });
 
         three.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_three).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_three).charAt(0));
             }
         });
 
         four.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_four).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_four).charAt(0));
             }
         });
 
         five.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_five).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_five).charAt(0));
             }
         });
 
         six.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_six).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_six).charAt(0));
             }
         });
 
         seven.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_seven).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_seven).charAt(0));
             }
         });
 
         eight.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_eight).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_eight).charAt(0));
             }
         });
 
         nine.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_nine).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_nine).charAt(0));
             }
         });
 
         zero.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_zero).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_zero).charAt(0));
             }
         });
     }
@@ -196,63 +186,63 @@ public class CalculatorNumpad extends LinearLayout {
         equals.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_equals).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_equals).charAt(0));
             }
         });
 
         plus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_plus).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_plus).charAt(0));
             }
         });
 
         minus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_minus).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_minus).charAt(0));
             }
         });
 
         multiply.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_multiply).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_multiply).charAt(0));
             }
         });
 
         divide.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_divide).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_divide).charAt(0));
             }
         });
 
         decimal.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_decimal).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_decimal).charAt(0));
             }
         });
 
         percentage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.updatePreview(getResources().getString(R.string.numpad_percent).charAt(0));
+                listener.updatePreview(getResources().getString(R.string.numpad_percent).charAt(0));
             }
         });
 
         ce.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.resetPreview();
+                listener.resetPreview();
             }
         });
 
         del.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                preview.deleteLastInput();
+                listener.deleteLastInput();
             }
         });
     }

@@ -21,17 +21,5 @@
         android:layout_height="match_parent"
         android:id="@id/calculator_pad_slider"
         android:layout_below="@id/calculator_preview">
-
-        <com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-        </com.ryanairth.mathsheetcalculator.GUI.CalculatorNumpad>
-
-        <com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center">
-        </com.ryanairth.mathsheetcalculator.GUI.CalculatorScientificPad>
     </com.ryanairth.mathsheetcalculator.GUI.PadSlider>
 </RelativeLayout>
