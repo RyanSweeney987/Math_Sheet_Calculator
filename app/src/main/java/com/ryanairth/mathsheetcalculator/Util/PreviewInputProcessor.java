@@ -121,6 +121,10 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                 case '.':
                     processDecimal();
                     break;
+                case '(':
+                case ')':
+                    processBracket(value);
+                    break;
                 default:
                     if(Character.isDigit(value)) {
                         processDigit(value);
@@ -138,6 +142,10 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                     break;
                 case '.':
                     processDecimal();
+                    break;
+                case '(':
+                case ')':
+                    processBracket(value);
                     break;
                 default:
                     if(Character.isDigit(value)) {
@@ -299,23 +307,10 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
     /**
      * Processes symbols, pretty much everything except digits, decimal and minus, so plus, mult,
      * divide, percentage etc
+     *
+     * @param symbol symbol being processed
      */
     private void processSymbol(final char symbol) {
-        // TODO - TEMP/TEST
-        /*if(symbol == MathOperator.LEFT_BRACKET.getSymbol() || symbol == MathOperator.RIGHT_BRACKET.getSymbol()) {
-            setText(currentText + symbol);
-
-            updateCurrentBlockString(String.valueOf(symbol), true, false);
-
-            // TODO - refactor so no return statement
-            return;
-        }*/
-        // TODO - END TEMP/TEXT
-
-        // TODO - if right bracket is added straight after a number, add a multiply.
-        // TODO - Do the same if number is added directly after right bracket, otherwise, use don't add a multiply.
-
-
         // First check to make sure if we're not entering the same symbol, if we are, ignore it
         if(symbol != lastChar) {
             // If the last character is a minus
@@ -337,6 +332,27 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                     updateCurrentBlockString(String.valueOf(symbol), true, true);
                 }
             }
+        }
+    }
+
+    /**
+     * Processes brackets similar in general formatting properties as symbols yet need to be separated
+     * to handle a few different cases
+     *
+     * @param bracket the bracket to be added
+     */
+    private void processBracket(final char bracket) {
+        // TODO - if right bracket is added straight after a number, add a multiply.
+        // TODO - Do the same if number is added directly after right bracket, otherwise, use don't add a multiply.
+
+        if(bracket != lastChar) {
+            if(Character.isDigit(lastChar) && bracket != MathOperator.RIGHT_BRACKET.getSymbol()) {
+                updateCurrentBlockString(String.valueOf(MathOperator.MULTIPLY.getSymbol()), true, false);
+            }
+
+            setText(currentText + bracket);
+
+            updateCurrentBlockString(String.valueOf(bracket), true, false);
         }
     }
 
@@ -413,17 +429,15 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
                 try {
                     Double number = Double.parseDouble(currentBlockString);
                     manager.createAndAddBlock(number);
+
+                    Log.i(TAG, "Current block string num: " + currentBlockString);
                 } catch(NumberFormatException e) {
                     Log.w(TAG, "Failed parsing a number, adding character!");
 
                     if(currentBlockString.length() > 0) {
-                        // TODO - TEST
-                        if(lastChar == '(') {
-                            manager.createAndAddBlock(MathOperator.MULTIPLY);
-                        }
-                        // TODO - END TEST
-
                         manager.createAndAddBlock(MathOperator.getEnumFromCharacter(currentBlockString.charAt(0)));
+
+                        Log.i(TAG, "Current block string sym: " + currentBlockString.charAt(0));
                     } else {
                         Log.e(TAG, "Failed to add character, currentBlockString is empty");
                     }

@@ -18,13 +18,9 @@ import java.util.List;
  * Created by Ryan Airth (Sweeney) on 27/02/2016.
  * Copyright information found in accompanying License.txt file.
  */
-<<<<<<< HEAD
-public class CalculatorNumpad extends LinearLayout {
-    // TODO - better link to xml file
 
-=======
 public class CalculatorNumpad extends LinearLayout implements PreviewUpdateDispatcher{
->>>>>>> Calc_Preview
+
     /**
      * Grid layout to put the numbers and such in, for some reason this is really needed or odd gaps
      * appear between the buttons

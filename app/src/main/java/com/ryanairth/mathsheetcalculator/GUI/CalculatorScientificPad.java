@@ -17,17 +17,12 @@ import com.ryanairth.mathsheetcalculator.Util.PreviewUpdateListener;
  * Created by Ryan Airth (Sweeney) on 09/03/2016.
  * Copyright information found in accompanying License.txt file.
  */
-<<<<<<< HEAD
-public class CalculatorScientificPad extends LinearLayout {
-    // TODO - better link to xml file
 
-=======
 public class CalculatorScientificPad extends LinearLayout implements PreviewUpdateDispatcher {
     /**
      * Grid layout to put the buttons in, for some reason this is really needed or odd gaps
      * appear between the buttons
      */
->>>>>>> Calc_Preview
     private GridLayout gridLayout;
     /**
      * Buttons that are symbols used with more scientific operations

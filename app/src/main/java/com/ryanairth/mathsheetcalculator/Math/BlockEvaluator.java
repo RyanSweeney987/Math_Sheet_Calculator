@@ -92,6 +92,8 @@ public class BlockEvaluator {
         // We know there's at least a single element, so we know that blocks.get(0) will not fail
         currentValue = ((NumberBlock)blockArray.get(0)).getValue();
 
+        boolean containsBracket = containsBracket(blockArray);
+
         // Otherwise we're fine to carry on with our usual operations
         for(int i = 1; i < blockArray.size(); i++) {
             // Test to see if final block is a symbol, if so, break, no need to continue
@@ -109,7 +111,77 @@ public class BlockEvaluator {
             // TODO - right bracket is added
 
 
-            double nextValue = ((NumberBlock)blockArray.get(i)).getValue();
+
+            double nextValue = 0;
+
+            // TODO - refactor!!!
+            if(containsBracket) {
+                // If we have an equal number of brackets we call this method again passing in the sub sequence
+                if(hasBracketPairs(blockArray)) {
+                    // Create a new array containing all values from the first an last bracket
+                    int firstLoc = -1, lastLoc = -1;
+
+                    for(int j = 0; j < blockArray.size(); j++) {
+                        if(blockArray.get(j) instanceof SymbolBlock) {
+                            if(blockArray.get(j).getValue() == MathOperator.LEFT_BRACKET && firstLoc == -1) {
+                                firstLoc = j;
+
+                                Log.i(TAG, "Left bracket location: " + j);
+                            } else if(blockArray.get(j).getValue() == MathOperator.RIGHT_BRACKET && j > lastLoc) {
+                                lastLoc = j;
+
+                                Log.i(TAG, "Right bracket location: " + j);
+                            }
+                        }
+                    }
+
+                    for(Block elem : blockArray.subList(firstLoc + 1, lastLoc)) {
+                        Log.i(TAG, "Sublist item: " + elem.getValue());
+                    }
+
+                    nextValue = evaluate(blockArray.subList(firstLoc + 1, lastLoc));
+
+                    List<Block> sublistBefore = blockArray.subList(0, firstLoc);
+
+                    for(Block elem : sublistBefore) {
+                        Log.i(TAG, "Sublist before item: " + elem.getValue());
+                    }
+
+                    List<Block> sublistAfter = blockArray.subList(lastLoc + 1, blockArray.size());
+
+                    for(Block elem : sublistAfter) {
+                        Log.i(TAG, "Sublist before item: " + elem.getValue());
+                    }
+
+                    List<Block> newSublist = new ArrayList<>();
+
+                    for(int j = 0; j < sublistAfter.size(); j++) {
+                        sublistBefore.add(sublistAfter.get(j));
+                    }
+
+                    blockArray = newSublist;
+
+                    Log.i(TAG, "First location: " + firstLoc);
+                    Log.i(TAG, "Last location: " + lastLoc);
+                } else {
+                    int firstLoc = -1;
+
+                    for(int j = 0; j < blockArray.size(); j++) {
+                        if(blockArray.get(j) instanceof SymbolBlock) {
+                            if(blockArray.get(j).getValue() == MathOperator.LEFT_BRACKET) {
+                                firstLoc = j;
+
+                                break;
+                            }
+                        }
+                    }
+
+                    return evaluate(blockArray.subList(0, firstLoc));
+                }
+            } else {
+                nextValue = ((NumberBlock)blockArray.get(i)).getValue();
+            }
+            //double nextValue = ((NumberBlock)blockArray.get(i)).getValue();
 
             currentValue = performMathOperation(currentValue, nextValue, operator);
         }
@@ -122,7 +194,7 @@ public class BlockEvaluator {
         int rightBracketCount = 0;
 
         for(int i = 0; i < blockList.size(); i++) {
-            if(blockList.get(i).getValue() instanceof SymbolBlock) {
+            if(blockList.get(i) instanceof SymbolBlock) {
                 if(blockList.get(i).getValue() == MathOperator.LEFT_BRACKET) {
                     leftBracketCount++;
                 } else if(blockList.get(i).getValue() == MathOperator.RIGHT_BRACKET) {
@@ -132,16 +204,22 @@ public class BlockEvaluator {
 
         }
 
-        if(leftBracketCount % rightBracketCount == 0) {
-            return true;
-        } else {
-            return false;
+        return leftBracketCount == rightBracketCount;
+    }
+
+    private boolean containsBracket(List<Block> blockList) {
+        for(int i = 0; i < blockList.size(); i++) {
+            if(blockList.get(i) instanceof SymbolBlock) {
+                if(blockList.get(i).getValue() == MathOperator.LEFT_BRACKET) {
+                    return true;
+                }
+            }
         }
+
+        return false;
     }
 
     private double performMathOperation(double currentValue, double nextValue, MathOperator operator)
-
-
             throws InvalidMathOperatorException {
         switch (operator) {
             case PLUS:
@@ -157,7 +235,6 @@ public class BlockEvaluator {
                 currentValue /= nextValue;
                 break;
             case PERCENTAGE:
-                // FIXME - order is broken! Should be 100%90 = 90 (90% of 100)
                 currentValue = (currentValue / 100) * nextValue;
                 break;
             case NONE:
