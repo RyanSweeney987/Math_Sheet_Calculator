@@ -20,8 +20,8 @@ import com.ryanairth.mathsheetcalculator.Util.PreviewInputProcessor;
  * Copyright information found in accompanying License.txt file.
  */
 public class BasicCalculator extends AppCompatActivity {
-    // TODO - remake some components to use fragments
-    // TODO - memory functions (M+, M-, M*, M/, MSELECT, MCLEAR, MCOPY
+    // TODO - MAYBE - remake some components to use fragments
+    // TODO - memory functions (M+, M-, M*, M/, MSELECT, MCLEAR, MCOPY)
 
     public final static String TAG = "Ryan: ";
 

@@ -31,6 +31,8 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
     final String DASH_SEPARATOR = "------------------------------------------------------";
     final String HASH_SEPARATOR = "######################################################";
 
+    //TODO - remake processing so that values are processed immediately, feel more responsive!
+
     private MathPreview preview;
     /*
         Block manager that manages all of the numbers and symbols used for the maths
@@ -170,6 +172,9 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
      * Processes the equals input, will calculate the final sum given and sets the preview text
      */
     private void processEquals() {
+        // TODO - MAYBE - process that if there isn't a bracket already, add one, can always add opening brackets.
+        // TODO - MAYBE - if any brackets missing, warn user, if equals pressed again, add missing brackets to end.
+
         updateCurrentBlockString(currentBlockString, true, false);
 
         Log.i(TAG, "::Blocks::" + System.getProperty("line.separator")
@@ -208,7 +213,7 @@ public class PreviewInputProcessor implements PreviewUpdateListener {
 
             Log.e(TAG, exception);
 
-            // TODO - show popup explaining that an error has occurred - when internet is fixed
+            // TODO - show popup explaining that an error has occurred
             //DialogFragment exceptionDialog = new ExceptionDialogFragment();
             //exceptionDialog.show(MathSheetApp.getAppContext(), "exception");
 
